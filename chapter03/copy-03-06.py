@@ -19,3 +19,18 @@
 # MAGIC         2 - Register the model
 # MAGIC         3 - Move the model into production
 # MAGIC         
+
+# COMMAND ----------
+
+# Import the 'os' module, which provides a way to interact with the operating system.
+# The 'os' module allows you to set and retrieve environment variables, among other functionalities.
+import os
+
+# Set an environment variable 'DATABRICKS_TOKEN' with the value of your Databricks personal access token.
+# This token will be used for authenticating API requests to Databricks services (e.g., for model serving or running jobs).
+# The 'os.environ' dictionary allows you to set or access environment variables in the current session.
+
+
+# COMMAND ----------
+
+
