@@ -31,6 +31,11 @@ import os
 # The 'os.environ' dictionary allows you to set or access environment variables in the current session.
 
 
+# Note: This is a sensitive access token, so make sure you do not expose it in your code.
+# In a production environment, it's recommended to use more secure ways to manage sensitive information,
+# such as using environment variable management tools or secrets management services (e.g., AWS Secrets Manager, Azure Key Vault).
+
+
 # COMMAND ----------
 
 
