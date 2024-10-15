@@ -23,6 +23,14 @@
 
 # COMMAND ----------
 
+# MAGIC %pip install azure-identity azure-keyvault-secrets
+
+# COMMAND ----------
+
+# MAGIC %restart_python
+
+# COMMAND ----------
+
 # Import the 'os' module, which provides a way to interact with the operating system.
 # The 'os' module allows you to set and retrieve environment variables, among other functionalities.
 import os
@@ -30,7 +38,9 @@ import os
 # Set an environment variable 'DATABRICKS_TOKEN' with the value of your Databricks personal access token.
 # This token will be used for authenticating API requests to Databricks services (e.g., for model serving or running jobs).
 # The 'os.environ' dictionary allows you to set or access environment variables in the current session.
+# Replace with your Key Vault URL
 
+os.environ['DATABRICKS_TOKEN']  =''
 
 # Note: This is a sensitive access token, so make sure you do not expose it in your code.
 # In a production environment, it's recommended to use more secure ways to manage sensitive information,
