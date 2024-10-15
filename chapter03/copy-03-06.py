@@ -30,6 +30,7 @@ import os
 # This token will be used for authenticating API requests to Databricks services (e.g., for model serving or running jobs).
 # The 'os.environ' dictionary allows you to set or access environment variables in the current session.
 
+os.environ['DATABRICKS_TOKEN'] = ""
 
 # Note: This is a sensitive access token, so make sure you do not expose it in your code.
 # In a production environment, it's recommended to use more secure ways to manage sensitive information,
