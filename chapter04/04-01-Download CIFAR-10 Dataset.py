@@ -17,7 +17,7 @@ train_dataset = torchvision.datasets.CIFAR10(
 
 # Download and load the test data
 test_dataset = torchvision.datasets.CIFAR10(
-    root='dbfs:/Filestore/datasets/CIFAR10/',
+    root='/dbfs:/Filestore/datasets/CIFAR10/',
     train=False,
     download=True,
     transform=transform
