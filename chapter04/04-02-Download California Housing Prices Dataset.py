@@ -7,12 +7,12 @@
 # MAGIC
 # MAGIC  
 # MAGIC   
-# MAGIC    Name:          chapter 04-01-Download Titanic Dataset
+# MAGIC    Name:          chapter 04-01-Download Calfiornia Housing Prices Dataset
 # MAGIC  
 # MAGIC    Author:    Bennie Haelen
-# MAGIC    Date:      10-23-2024
+# MAGIC    Date:      10-24-2024
 # MAGIC
-# MAGIC    Purpose:   This notebook downloads the titanic dataset from the Kaggle Website, and saves it as a Unity Table
+# MAGIC    Purpose:   This notebook downloads the California Housing Prices dataset from the Kaggle Website, and saves it as a Unity Table
 # MAGIC                  
 # MAGIC       An outline of the different sections in this notebook:
 # MAGIC         1 - Make sure kaggle and kagglehub are installed
@@ -44,8 +44,8 @@
 
 # COMMAND ----------
 
-from pyspark.sql import SparkSession
-from pyspark.sql.types import IntegerType, FloatType
+from pyspark.sql.functions import col
+from pyspark.sql.types import IntegerType, FloatType, StringType
 
 # COMMAND ----------
 
@@ -54,13 +54,13 @@ from pyspark.sql.types import IntegerType, FloatType
 # COMMAND ----------
 
 # File locations
-TITANIC_LOCAL_FILE_NAME = "tested.csv"
-KAGGLE_FILE_LOCATION    = "brendan45774/test-file"
+CA_HOUSING_PRICES_LOCAL_FILE_NAME = "housing.csv"
+KAGGLE_FILE_LOCATION = "kallolnath1/california-housing-prices-dataset"
 
 # Unity Catalog, schema and table name
 CATALOG_NAME = "book_ai_ml_lakehouse"
 SCHEMA_NAME  = "automl"
-TABLE_NAME   = "titanic"
+TABLE_NAME   = "ca_housing_prices"
 
 # COMMAND ----------
 
@@ -84,6 +84,11 @@ print("Path to dataset files:", local_path)
 
 # COMMAND ----------
 
+# MAGIC %sh
+# MAGIC ls /root/.cache/kagglehub/datasets/kallolnath1/california-housing-prices-dataset/versions/1
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC #Copy the local file to our DBFS datasets location
 
@@ -92,14 +97,14 @@ print("Path to dataset files:", local_path)
 import shutil
 
 # Construct the full local path by appending the file name to the existing local directory path
-local_path = f"{local_path}/{TITANIC_LOCAL_FILE_NAME}"
+local_path = f"{local_path}/{CA_HOUSING_PRICES_LOCAL_FILE_NAME}"
 
 # Print the local path to verify correctness
 print(f"The file has been downloaded to local path: {local_path}")  
 
 # Define the DBFS path where you want to move the file
 # This path specifies where the file will be stored in the Databricks File System (DBFS)
-dbfs_path = f"{DBFS_DATASET_DIRECTORY}/{TITANIC_LOCAL_FILE_NAME}"
+dbfs_path = f"{DBFS_DATASET_DIRECTORY}/{CA_HOUSING_PRICES_LOCAL_FILE_NAME}"
 print(f"The file will be copied to the dfbs location: {dbfs_path}")
 
 # Use shutil.copy() to move the file from the local path to the DBFS path
@@ -141,14 +146,17 @@ df.show(5)
 
 # COMMAND ----------
 
-# Convert the columns to the right data types
-df = df.withColumn("PassengerId", df["PassengerId"].cast(IntegerType())) \
-       .withColumn("Survived", df["Survived"].cast(IntegerType())) \
-       .withColumn("Pclass", df["Pclass"].cast(IntegerType())) \
-       .withColumn("Age", df["Age"].cast(FloatType())) \
-       .withColumn("SibSp", df["SibSp"].cast(IntegerType())) \
-       .withColumn("Parch", df["Parch"].cast(IntegerType())) \
-       .withColumn("Fare", df["Fare"].cast(FloatType()))
+# Type conversions
+df = df.withColumn("longitude", col("longitude").cast(FloatType()))
+df = df.withColumn("latitude", col("latitude").cast(FloatType()))
+df = df.withColumn("housing_median_age", col("housing_median_age").cast(IntegerType()))
+df = df.withColumn("total_rooms", col("total_rooms").cast(IntegerType()))
+df = df.withColumn("total_bedrooms", col("total_bedrooms").cast(IntegerType()))
+df = df.withColumn("population", col("population").cast(IntegerType()))
+df = df.withColumn("households", col("households").cast(IntegerType()))
+df = df.withColumn("median_income", col("median_income").cast(FloatType()))
+df = df.withColumn("median_house_value", col("median_house_value").cast(FloatType()))
+df = df.withColumn("ocean_proximity", col("ocean_proximity").cast(StringType()))
 
 df.show(5)
 
