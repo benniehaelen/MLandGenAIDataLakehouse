@@ -15,19 +15,27 @@
 # MAGIC    Purpose:   This notebook downloads the titanic dataset from the Kaggle Website, and saves it as a Unity Table
 # MAGIC                  
 # MAGIC       An outline of the different sections in this notebook:
-# MAGIC         1 - Make sure kaggle and kagglehub are installed
+# MAGIC         1 - Handle the Pre-Requisites
+# MAGIC            1-1 - Make sure kaggle and kagglehub are installed
 # MAGIC         2 - Use KaggleHub to download the Kaggle Dataset
-# MAGIC         3 - Copy the local file to our DBFS datasets location
-# MAGIC         4 - Read the source file from our dbfs location
-# MAGIC         5 - Create our Catalog and Schema (if needed)
-# MAGIC         6 - Save our Dataframe as a Delta Table in our Catalog
+# MAGIC            2-1 - Download the dataset to a local path
+# MAGIC            2-2 - Copy the local file to our DBFS datasets location
+# MAGIC         3 - Prepare and save the Dataset
+# MAGIC            3-1 - Read the source file from our dbfs location
+# MAGIC            3-2 - Create our Catalog and Schema (if needed)
+# MAGIC            3-3 - Save our Dataframe as a Delta Table in our Catalog
 # MAGIC               
 # MAGIC
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Make sure that kaggle and kagglehub are installed
+# MAGIC #Handle Pre-Requisites
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ##Make sure that kaggle and kagglehub are installed
 
 # COMMAND ----------
 
@@ -40,7 +48,7 @@
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Make sure to run the notebook with our constants
+# MAGIC ##Make sure to run the notebook with our constants
 
 # COMMAND ----------
 
@@ -57,9 +65,7 @@ from pyspark.sql.types import IntegerType, FloatType
 TITANIC_LOCAL_FILE_NAME = "tested.csv"
 KAGGLE_FILE_LOCATION    = "brendan45774/test-file"
 
-# Unity Catalog, schema and table name
-CATALOG_NAME = "book_ai_ml_lakehouse"
-SCHEMA_NAME  = "automl"
+# Table Name
 TABLE_NAME   = "titanic"
 
 # COMMAND ----------
@@ -70,13 +76,18 @@ TABLE_NAME   = "titanic"
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ##Download the dataset to a local path
+
+# COMMAND ----------
+
 # Import the 'kagglehub' module to interact with Kaggle datasets.
 import kagglehub  
 
 # Download the latest version of the specified dataset.
 # 'dataset_download' takes the dataset identifier as an argument.
 # In this case, it downloads the dataset 'test-file' by the user 'brendan45774',
-# which is the Kaggle Dataset
+# which is the Kaggle Titanic Dataset
 local_path = kagglehub.dataset_download(KAGGLE_FILE_LOCATION)
 
 # Print the local file path where the dataset files have been downloaded.
@@ -85,7 +96,7 @@ print("Path to dataset files:", local_path)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Copy the local file to our DBFS datasets location
+# MAGIC ##Copy the local file to our DBFS datasets location
 
 # COMMAND ----------
 
@@ -109,12 +120,17 @@ shutil.copy(local_path, dbfs_path)
 # COMMAND ----------
 
 # MAGIC %fs
-# MAGIC ls dbfs:/FileStore/datasets
+# MAGIC ls dbfs:/FileStore/datasets/
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Read the source file from our dbfs location
+# MAGIC #Prepare and save the Dataset
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ##Read the source file from our dbfs location
 
 # COMMAND ----------
 
@@ -137,7 +153,7 @@ df.show(5)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Convert the columns to the correct data types
+# MAGIC ##Convert the columns to the correct data types
 
 # COMMAND ----------
 
@@ -155,7 +171,7 @@ df.show(5)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Create our Catalog and Schema (if needed)
+# MAGIC ##Create our Catalog and Schema (if needed)
 
 # COMMAND ----------
 
@@ -175,7 +191,7 @@ print(f"Schema '{SCHEMA_NAME}' created in catalog '{CATALOG_NAME}'.")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Save our Dataframe as a Delta Table in our Catalog
+# MAGIC ##Save our Dataframe as a Delta Table in our Catalog
 
 # COMMAND ----------
 

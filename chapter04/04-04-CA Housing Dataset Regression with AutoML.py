@@ -106,7 +106,7 @@ train_df.head()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Investigate the shapes of hte training and test datasets
+# MAGIC ##Investigate the shapes of the training and test datasets
 
 # COMMAND ----------
 
@@ -120,26 +120,19 @@ train_df.shape, test_df.shape
 
 # COMMAND ----------
 
-train_df.columns
-
-# COMMAND ----------
-
-test_df.columns
-
-# COMMAND ----------
-
 # Convert the Pandas Dataframe to a Spark Dataframe,
 # since the AutoMLRegressor class expects a Spark Dataframe
 train_df_spark = spark.createDataFrame(train_df)
 
 # COMMAND ----------
 
+# Display the columns of the Spark Dataframe
 train_df_spark.columns
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Invoke the regression
+# MAGIC ##Start the AutoML Regression 
 
 # COMMAND ----------
 

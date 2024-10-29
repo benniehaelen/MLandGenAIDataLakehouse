@@ -15,19 +15,27 @@
 # MAGIC    Purpose:   This notebook downloads the California Housing Prices dataset from the Kaggle Website, and saves it as a Unity Table
 # MAGIC                  
 # MAGIC       An outline of the different sections in this notebook:
-# MAGIC         1 - Make sure kaggle and kagglehub are installed
+# MAGIC         1 - Handle the Pre-Requisties
+# MAGIC            1-1 - Make sure kaggle and kagglehub are installed
 # MAGIC         2 - Use KaggleHub to download the Kaggle Dataset
-# MAGIC         3 - Copy the local file to our DBFS datasets location
-# MAGIC         4 - Read the source file from our dbfs location
-# MAGIC         5 - Create our Catalog and Schema (if needed)
-# MAGIC         6 - Save our Dataframe as a Delta Table in our Catalog
+# MAGIC            2-1 - Download the dataset to a local path
+# MAGIC            2-2 - Copy the local file to our DBFS datasets location
+# MAGIC         3 - Prepare and Save the Dataset
+# MAGIC            3-1 - Read the source file from our dbfs location
+# MAGIC            3-2 - Create our Catalog and Schema (if needed)
+# MAGIC            3-3 - Save our Dataframe as a Delta Table in our Catalog
 # MAGIC               
 # MAGIC
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Make sure that kaggle and kagglehub are installed
+# MAGIC #Handle Pre-Requisites
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ##Make sure that kaggle and kagglehub are installed
 
 # COMMAND ----------
 
@@ -39,13 +47,13 @@
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC #Make sure to run the notebook with our constants
+from pyspark.sql.functions import col
+from pyspark.sql.types import IntegerType, FloatType, StringType
 
 # COMMAND ----------
 
-from pyspark.sql.functions import col
-from pyspark.sql.types import IntegerType, FloatType, StringType
+# MAGIC %md
+# MAGIC ##Make sure to run the notebook with our constants
 
 # COMMAND ----------
 
@@ -57,16 +65,19 @@ from pyspark.sql.types import IntegerType, FloatType, StringType
 CA_HOUSING_PRICES_LOCAL_FILE_NAME = "housing.csv"
 KAGGLE_FILE_LOCATION = "kallolnath1/california-housing-prices-dataset"
 
-# Unity Catalog, schema and table name
-CATALOG_NAME = "book_ai_ml_lakehouse"
-SCHEMA_NAME  = "automl"
+# Unity Table Name
 TABLE_NAME   = "ca_housing_prices"
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC #Use KaggleHub to download the Kaggle Dataset
-# MAGIC [Link to the dataset](https://www.kaggle.com/datasets/brendan45774/test-file)
+# MAGIC [Link to the dataset](https://www.kaggle.com/datasets/kallolnath1/california-housing-prices-dataset)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ##Downlaod the dataset to a local path
 
 # COMMAND ----------
 
@@ -75,7 +86,7 @@ import kagglehub
 
 # Download the latest version of the specified dataset.
 # 'dataset_download' takes the dataset identifier as an argument.
-# In this case, it downloads the dataset 'test-file' by the user 'brendan45774',
+# In this case, it downloads the dataset 'test-file' by the user 'kallolnath1',
 # which is the Kaggle Dataset
 local_path = kagglehub.dataset_download(KAGGLE_FILE_LOCATION)
 
@@ -84,13 +95,8 @@ print("Path to dataset files:", local_path)
 
 # COMMAND ----------
 
-# MAGIC %sh
-# MAGIC ls /root/.cache/kagglehub/datasets/kallolnath1/california-housing-prices-dataset/versions/1
-
-# COMMAND ----------
-
 # MAGIC %md
-# MAGIC #Copy the local file to our DBFS datasets location
+# MAGIC ##Copy the local file to our DBFS datasets location
 
 # COMMAND ----------
 
@@ -119,7 +125,12 @@ shutil.copy(local_path, dbfs_path)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Read the source file from our dbfs location
+# MAGIC #Prepare and Save the Dataset
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ##Read the source file from our dbfs location
 
 # COMMAND ----------
 
@@ -142,7 +153,7 @@ df.show(5)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Convert the columns to the correct data types
+# MAGIC ##Convert the columns to the correct data types
 
 # COMMAND ----------
 
@@ -163,7 +174,7 @@ df.show(5)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Create our Catalog and Schema (if needed)
+# MAGIC ##Create our Catalog and Schema (if needed)
 
 # COMMAND ----------
 
@@ -183,7 +194,7 @@ print(f"Schema '{SCHEMA_NAME}' created in catalog '{CATALOG_NAME}'.")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Save our Dataframe as a Delta Table in our Catalog
+# MAGIC ##Save our Dataframe as a Delta Table in our Catalog
 
 # COMMAND ----------
 
