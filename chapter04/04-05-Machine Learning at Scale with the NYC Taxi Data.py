@@ -571,46 +571,54 @@ print(f"Test RMSE: {rmse:.2f} minutes")
 
 # COMMAND ----------
 
+import sys
+sys.setrecursionlimit(10000)
+
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ##Defining the Objective Function
 
 # COMMAND ----------
 
-from hyperopt import fmin, tpe, hp, SparkTrials, STATUS_OK
+from pyspark.ml.regression import GBTRegressor
+from pyspark.ml.evaluation import RegressionEvaluator
+from hyperopt import STATUS_OK
 
-# Define the objective function for hyperparameter tuning
-# This function is used by Hyperopt to evaluate different hyperparameter combinations
 def objective_function(params):
-    # Extract hyperparameters from the 'params' dictionary and convert to integers
-    # 'maxDepth' controls the maximum depth of each decision tree in the ensemble
-    # 'maxIter' controls the maximum number of iterations (i.e., number of trees) for boosting
-    maxDepth = int(params['maxDepth'])
-    maxIter = int(params['maxIter'])
-    
-    # Initialize a Gradient-Boosted Tree Regressor with the current hyperparameters
-    # 'featuresCol' specifies the input feature column ('features')
-    # 'labelCol' specifies the target variable column ('label')
-    gbt = GBTRegressor(
-        featuresCol='features',
-        labelCol='label',
-        maxDepth=maxDepth,
-        maxIter=maxIter
-    )
-    
-    # Train the GBT model on the training data using the specified hyperparameters
-    model = gbt.fit(train_data)
-    
-    # Make predictions on the test data using the trained model
-    predictions = model.transform(test_data)
-    
-    # Calculate the Root Mean Squared Error (RMSE) to evaluate the model's performance
-    # 'evaluator' is an instance of RegressionEvaluator defined earlier, which measures RMSE
-    rmse = evaluator.evaluate(predictions)
-    
-    # Return the evaluation result as a dictionary, with 'loss' representing the objective value
-    # 'loss' is set to RMSE, as Hyperopt aims to minimize this value during tuning
-    # 'status' is set to STATUS_OK to indicate a successful evaluation
-    return {'loss': rmse, 'status': STATUS_OK}
+    try:
+        # Convert hyperparameters to integers
+        maxDepth = int(params['maxDepth'])
+        maxIter = int(params['maxIter'])
+
+        # Access the broadcasted training and test data
+        train_data = train_data_bc.value
+        test_data = test_data_bc.value
+
+        # Initialize a Gradient-Boosted Tree Regressor with the current hyperparameters
+        gbt = GBTRegressor(
+            featuresCol='features',
+            labelCol='label',
+            maxDepth=maxDepth,
+            maxIter=maxIter
+        )
+
+        # Train the model using the broadcasted training data
+        model = gbt.fit(train_data)
+
+        # Make predictions on the broadcasted test data
+        predictions = model.transform(test_data)
+
+        # Calculate the RMSE for model evaluation
+        evaluator = RegressionEvaluator(labelCol='label', predictionCol='prediction', metricName='rmse')
+        rmse = evaluator.evaluate(predictions)
+
+        # Return the evaluation result with RMSE as 'loss'
+        return {'loss': rmse, 'status': STATUS_OK}
+    except Exception as e:
+        # Return a large loss if any error occurs
+        return {'loss': float('inf'), 'status': STATUS_OK}
 
 
 # COMMAND ----------
@@ -645,27 +653,19 @@ search_space = {
 
 from hyperopt import fmin, tpe, SparkTrials
 
-# Initialize SparkTrials for distributed hyperparameter tuning
-# 'SparkTrials' is used to run Hyperopt trials in parallel across Spark executors
-# 'parallelism=4' sets the number of parallel evaluations to 4, speeding up the tuning process
+# Initialize SparkTrials for parallel execution
 spark_trials = SparkTrials(parallelism=4)
 
-# Use the 'fmin()' function to perform hyperparameter optimization
-# 'fn=objective_function' specifies the function to minimize, which is defined to return RMSE
-# 'space=search_space' defines the range of hyperparameters to explore, specified earlier
-# 'algo=tpe.suggest' uses the Tree-structured Parzen Estimator (TPE) algorithm for Bayesian optimization,
-# which intelligently searches the hyperparameter space to find the best configuration
-# 'max_evals=20' sets the maximum number of hyperparameter combinations to evaluate
-# 'trials=spark_trials' uses SparkTrials to distribute the evaluations across the Spark cluster
+# Perform hyperparameter tuning with Hyperopt and SparkTrials
 best_hyperparams = fmin(
-    fn=objective_function,
-    space=search_space,
-    algo=tpe.suggest,
-    max_evals=20,
-    trials=spark_trials
+    fn=objective_function,           # Objective function
+    space=search_space,              # Search space
+    algo=tpe.suggest,                # Optimization algorithm
+    max_evals=20,                    # Number of evaluations
+    trials=spark_trials              # Use SparkTrials for distributed execution
 )
 
-# Print the best hyperparameters found during the tuning process
+# Print the best hyperparameters found
 print("Best hyperparameters:", best_hyperparams)
 
 
