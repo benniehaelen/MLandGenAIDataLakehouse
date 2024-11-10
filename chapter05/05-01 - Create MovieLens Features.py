@@ -166,27 +166,27 @@ movie_features.display()
 
 # COMMAND ----------
 
-# Assemble the features into a single vector column
-assembler = VectorAssembler(inputCols=["avg_rating", "rating_count"], outputCol="user_features")
-user_features = assembler.transform(user_features)
+# # Assemble the features into a single vector column
+# assembler = VectorAssembler(inputCols=["avg_rating", "rating_count"], outputCol="user_features")
+# user_features = assembler.transform(user_features)
 
-# Scale the features
-scaler = StandardScaler(inputCol="user_features", outputCol="scaled_user_features", withMean=True, withStd=True)
-scaler_model = scaler.fit(user_features)
-user_features_scaled = scaler_model.transform(user_features)
+# # Scale the features
+# scaler = StandardScaler(inputCol="user_features", outputCol="scaled_user_features", withMean=True, withStd=True)
+# scaler_model = scaler.fit(user_features)
+# user_features_scaled = scaler_model.transform(user_features)
 
-# Convert the scaled vector column to an array
-user_features_scaled = user_features_scaled.withColumn("scaled_user_features_array", vector_to_array("scaled_user_features"))
+# # Convert the scaled vector column to an array
+# user_features_scaled = user_features_scaled.withColumn("scaled_user_features_array", vector_to_array("scaled_user_features"))
 
-# Split the array into separate columns
-user_features_scaled = user_features_scaled.select(
-    "user_id",
-    col("scaled_user_features_array")[0].alias("scaled_avg_rating"),
-    col("scaled_user_features_array")[1].alias("scaled_rating_count")
-)
+# # Split the array into separate columns
+# user_features_scaled = user_features_scaled.select(
+#     "user_id",
+#     col("scaled_user_features_array")[0].alias("scaled_avg_rating"),
+#     col("scaled_user_features_array")[1].alias("scaled_rating_count")
+# )
 
-# Show the scaled results
-user_features_scaled.show(truncate=False)
+# # Show the scaled results
+# user_features_scaled.show(truncate=False)
 
 # COMMAND ----------
 
@@ -195,27 +195,27 @@ user_features_scaled.show(truncate=False)
 
 # COMMAND ----------
 
-# Assemble the features into a single vector column
-assembler = VectorAssembler(inputCols=["avg_movie_rating", "movie_rating_count"], outputCol="movie_features")
-movie_features = assembler.transform(movie_features)
+# # Assemble the features into a single vector column
+# assembler = VectorAssembler(inputCols=["avg_movie_rating", "movie_rating_count"], outputCol="movie_features")
+# movie_features = assembler.transform(movie_features)
 
-# Scale the features
-scaler = StandardScaler(inputCol="movie_features", outputCol="scaled_movie_features", withMean=True, withStd=True)
-scaler_model = scaler.fit(movie_features)
-movie_features_scaled = scaler_model.transform(movie_features)
+# # Scale the features
+# scaler = StandardScaler(inputCol="movie_features", outputCol="scaled_movie_features", withMean=True, withStd=True)
+# scaler_model = scaler.fit(movie_features)
+# movie_features_scaled = scaler_model.transform(movie_features)
 
-# Convert the scaled vector column to an array
-movie_features_scaled = movie_features_scaled.withColumn("scaled_movie_features_array", vector_to_array("scaled_movie_features"))
+# # Convert the scaled vector column to an array
+# movie_features_scaled = movie_features_scaled.withColumn("scaled_movie_features_array", vector_to_array("scaled_movie_features"))
 
-# Split the array into separate columns
-movie_features_scaled = movie_features_scaled.select(
-    "movie_id",
-    F.col("scaled_movie_features_array")[0].alias("scaled_avg_rating"),
-    F.col("scaled_movie_features_array")[1].alias("scaled_rating_count")
-)
+# # Split the array into separate columns
+# movie_features_scaled = movie_features_scaled.select(
+#     "movie_id",
+#     F.col("scaled_movie_features_array")[0].alias("scaled_avg_rating"),
+#     F.col("scaled_movie_features_array")[1].alias("scaled_rating_count")
+# )
 
-# Show the scaled results
-user_features_scaled.show(truncate=False)
+# # Show the scaled results
+# user_features_scaled.show(truncate=False)
 
 # COMMAND ----------
 
@@ -257,14 +257,14 @@ fs = FeatureStoreClient()
 fs.create_table(
     name='movielens_features_db.user_features',
     primary_keys='user_id',
-    df=user_features_scaled,
+    df=user_features,
     description='User features (scaled) from MovieLens dataset'
 )
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Creaet the movie_features table
+# MAGIC ##Create the movie_features table
 
 # COMMAND ----------
 
@@ -272,7 +272,7 @@ fs.create_table(
 fs.create_table(
     name='movielens_features_db.movie_features',
     primary_keys='movie_id',
-    df=movie_features_scaled,
+    df=movie_features,
     description='Movie features from MovieLens dataset'
 )
 
