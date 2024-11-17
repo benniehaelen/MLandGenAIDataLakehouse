@@ -7,7 +7,7 @@
 # MAGIC
 # MAGIC  
 # MAGIC   
-# MAGIC    Name:          chapter 03-03-Model Buidling
+# MAGIC    Name:          chapter 03-03-Model Building
 # MAGIC  
 # MAGIC    Author:    Bennie Haelen
 # MAGIC    Date:      10-09-2024
@@ -22,7 +22,7 @@
 # MAGIC               2-3 Apply standard scaling to our X variables
 # MAGIC               2-4 Visualize the standard deviation and mean
 # MAGIC               2-5 Fill in default value for the 'agent' column
-# MAGIC         3 - Model Building
+# MAGIC         3 - Model Training
 # MAGIC               3-1 Set the MLFlow experiment
 # MAGIC               3-1 Logistic Regression
 # MAGIC               3-2 K-Neighboards Classifier
@@ -270,7 +270,7 @@ plt.show()  # Display the combined plot
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Model Building
+# MAGIC #Model Training
 
 # COMMAND ----------
 
@@ -301,43 +301,81 @@ mlflow.set_experiment(experiment_name = '/Users/bhaelen2018@outlook.com/hotel_bo
 
 from mlflow.models import infer_signature
 
-# Convert y_train and y_test to NumPy arrays before passing them to the model
-y_train_array = y_train.to_numpy()
-y_test_array = y_test.to_numpy()
-
-# Enable automatic logging of parameters, metrics, and model for scikit-learn models
+# Step 1 - Enable automatic logging of parameters, metrics, and model for scikit-learn models
 mlflow.sklearn.autolog()
 
-# Start a new MLflow run and log the model
+# Step 2 - Start a new MLflow run and log the model
 with mlflow.start_run(run_name='logistic_regression_model') as run1:
 
-    # Step 1: Train your model 
+    # Step 3 - Train your model 
     model = LogisticRegression(max_iter=10000, class_weight='balanced')
-    model.fit(X_train_scaled, y_train_array)
+    model.fit(X_train_scaled, y_train)  # Pass y_train directly as a pandas Series
 
-    # Step 2: Make predictions on the test set
+    # Step 4 - Make predictions on the test set
     y_pred_lr = model.predict(X_test_scaled)
 
-    # Step 3: Calculate performance metrics
-    acc_lr = accuracy_score(y_test_array, y_pred_lr)
-    conf_matrix = confusion_matrix(y_test_array, y_pred_lr)
-    clf_report = classification_report(y_test_array, y_pred_lr)
+    # Step 5 - Calculate performance metrics
+    acc_lr = accuracy_score(y_test, y_pred_lr)  # Use y_test directly
+    conf_matrix = confusion_matrix(y_test, y_pred_lr)
+    clf_report = classification_report(y_test, y_pred_lr)
 
-    # Step 4: Infer the model signature from the input and output data
+    # Step 6 - Infer the model signature from the input and output data
     signature = infer_signature(X_train_scaled, y_pred_lr)
 
-    # Log the model with the inferred signature
+    # Step 7 -Log the model with the inferred signature
     model_name = "Logistic_Regression_Model"
     mlflow.sklearn.log_model(model, model_name, signature=signature)
 
-    # Step 5: Print out the model's performance
+    # Step 8 - Print out the model's performance
     print(f"Accuracy Score of Logistic Regression: {acc_lr:.4f}")
     print(f"Confusion Matrix:\n{conf_matrix}")
     print(f"Classification Report:\n{clf_report}")
 
-    # Access and print the ID of the active MLflow run
+    # Step 9 - Access and print the ID of the active MLflow run
     run1 = mlflow.active_run()
     print("Active run ID:", run1.info.run_id)
+
+# COMMAND ----------
+
+# from mlflow.models import infer_signature
+
+# # Convert y_train and y_test to NumPy arrays before passing them to the model
+# y_train_array = y_train.to_numpy()
+# y_test_array = y_test.to_numpy()
+
+# # Enable automatic logging of parameters, metrics, and model for scikit-learn models
+# mlflow.sklearn.autolog()
+
+# # Start a new MLflow run and log the model
+# with mlflow.start_run(run_name='logistic_regression_model') as run1:
+
+#     # Step 1: Train your model 
+#     model = LogisticRegression(max_iter=10000, class_weight='balanced')
+#     model.fit(X_train_scaled, y_train_array)
+
+#     # Step 2: Make predictions on the test set
+#     y_pred_lr = model.predict(X_test_scaled)
+
+#     # Step 3: Calculate performance metrics
+#     acc_lr = accuracy_score(y_test_array, y_pred_lr)
+#     conf_matrix = confusion_matrix(y_test_array, y_pred_lr)
+#     clf_report = classification_report(y_test_array, y_pred_lr)
+
+#     # Step 4: Infer the model signature from the input and output data
+#     signature = infer_signature(X_train_scaled, y_pred_lr)
+
+#     # Log the model with the inferred signature
+#     model_name = "Logistic_Regression_Model"
+#     mlflow.sklearn.log_model(model, model_name, signature=signature)
+
+#     # Step 5: Print out the model's performance
+#     print(f"Accuracy Score of Logistic Regression: {acc_lr:.4f}")
+#     print(f"Confusion Matrix:\n{conf_matrix}")
+#     print(f"Classification Report:\n{clf_report}")
+
+#     # Access and print the ID of the active MLflow run
+#     run1 = mlflow.active_run()
+#     print("Active run ID:", run1.info.run_id)
 
 
 
@@ -357,7 +395,7 @@ with mlflow.start_run(run_name='k_neighbors_classifier') as run2:
     knn = KNeighborsClassifier(n_neighbors=5, weights='uniform')  # Feel free to adjust parameters
 
     # Train the KNN model on the scaled training data
-    knn.fit(X_train_scaled, y_train_array)
+    knn.fit(X_train_scaled, y_train)
 
     # Use the trained model to make predictions on the scaled test data
     y_pred_knn = knn.predict(X_test_scaled)
@@ -372,16 +410,16 @@ with mlflow.start_run(run_name='k_neighbors_classifier') as run2:
     mlflow.sklearn.log_model(knn, "knn_model", signature=signature, input_example=input_example)
 
     # Calculate performance metrics
-    acc_knn = accuracy_score(y_test_array, y_pred_knn)
-    conf = confusion_matrix(y_test_array, y_pred_knn)
-    clf_report = classification_report(y_test_array, y_pred_knn)
+    acc_knn = accuracy_score(y_test, y_pred_knn)
+    conf = confusion_matrix(y_test, y_pred_knn)
+    clf_report = classification_report(y_test, y_pred_knn)
 
     # Log metrics to MLflow
     mlflow.log_metric("accuracy", acc_knn)
     mlflow.log_metrics({
-        "precision": precision_score(y_test_array, y_pred_knn, average='weighted'),
-        "recall": recall_score(y_test_array, y_pred_knn, average='weighted'),
-        "f1_score": f1_score(y_test_array, y_pred_knn, average='weighted')
+        "precision": precision_score(y_test, y_pred_knn, average='weighted'),
+        "recall": recall_score(y_test, y_pred_knn, average='weighted'),
+        "f1_score": f1_score(y_test, y_pred_knn, average='weighted')
     })
 
     # Log the confusion matrix as an artifact (optional but useful)
@@ -415,15 +453,15 @@ with mlflow.start_run(run_name='decision_tree_classifier') as run3:
     dtc = DecisionTreeClassifier(max_depth=5, random_state=42)  # Adjust hyperparameters as needed
     
     # Train the Decision Tree model on the scaled training data
-    dtc.fit(X_train_scaled, y_train_array)
+    dtc.fit(X_train_scaled, y_train)
 
     # Make predictions on the scaled test data
     y_pred_dtc = dtc.predict(X_test_scaled)
 
     # Calculate performance metrics
-    acc_dtc = accuracy_score(y_test_array, y_pred_dtc)
-    conf = confusion_matrix(y_test_array, y_pred_dtc)
-    clf_report = classification_report(y_test_array, y_pred_dtc)
+    acc_dtc = accuracy_score(y_test, y_pred_dtc)
+    conf = confusion_matrix(y_test, y_pred_dtc)
+    clf_report = classification_report(y_test, y_pred_dtc)
 
     # Infer the model signature based on input and output
     signature = infer_signature(X_train_scaled, y_pred_dtc)
@@ -431,9 +469,9 @@ with mlflow.start_run(run_name='decision_tree_classifier') as run3:
     # Log performance metrics to MLflow
     mlflow.log_metric("accuracy", acc_dtc)
     mlflow.log_metrics({
-        "precision": precision_score(y_test_array, y_pred_dtc, average='weighted'),
-        "recall": recall_score(y_test_array, y_pred_dtc, average='weighted'),
-        "f1_score": f1_score(y_test_array, y_pred_dtc, average='weighted')
+        "precision": precision_score(y_test, y_pred_dtc, average='weighted'),
+        "recall": recall_score(y_test, y_pred_dtc, average='weighted'),
+        "f1_score": f1_score(y_test, y_pred_dtc, average='weighted')
     })
 
     # Log the confusion matrix and classification report as text artifacts
@@ -466,7 +504,7 @@ with mlflow.start_run(run_name='random_forest_classifier') as run4:
     rd_clf = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)  # Adjust hyperparameters as needed
     
     # Train the Random Forest classifier on the scaled training data
-    rd_clf.fit(X_train_scaled, y_train_array)
+    rd_clf.fit(X_train_scaled, y_train)
 
     # Make predictions on the scaled test data
     y_pred_rd_clf = rd_clf.predict(X_test_scaled)
@@ -475,9 +513,9 @@ with mlflow.start_run(run_name='random_forest_classifier') as run4:
     signature = infer_signature(X_train_scaled, y_pred_rd_clf)
 
     # Calculate performance metrics
-    acc_rd_clf = accuracy_score(y_test_array, y_pred_rd_clf)
-    conf = confusion_matrix(y_test_array, y_pred_rd_clf)
-    clf_report = classification_report(y_test_array, y_pred_rd_clf)
+    acc_rd_clf = accuracy_score(y_test, y_pred_rd_clf)
+    conf = confusion_matrix(y_test, y_pred_rd_clf)
+    clf_report = classification_report(y_test, y_pred_rd_clf)
 
     # Log the Random Forest model to MLflow with the inferred signature
     mlflow.sklearn.log_model(rd_clf, "random_forest_model", signature=signature)
@@ -485,9 +523,9 @@ with mlflow.start_run(run_name='random_forest_classifier') as run4:
     # Log performance metrics to MLflow
     mlflow.log_metric("accuracy", acc_rd_clf)
     mlflow.log_metrics({
-        "precision": precision_score(y_test_array, y_pred_rd_clf, average='weighted'),
-        "recall": recall_score(y_test_array, y_pred_rd_clf, average='weighted'),
-        "f1_score": f1_score(y_test_array, y_pred_rd_clf, average='weighted')
+        "precision": precision_score(y_test, y_pred_rd_clf, average='weighted'),
+        "recall": recall_score(y_test, y_pred_rd_clf, average='weighted'),
+        "f1_score": f1_score(y_test, y_pred_rd_clf, average='weighted')
     })
 
     # Log the confusion matrix and classification report as text artifacts in MLflow
@@ -505,310 +543,5 @@ with mlflow.start_run(run_name='random_forest_classifier') as run4:
 
 # COMMAND ----------
 
-from sklearn.decomposition import PCA
-
-# Apply PCA to reduce to 2 components
-pca = PCA(n_components=2)
-pca_components = pca.fit_transform(X_train_scaled)
-
-# Create a DataFrame with the PCA components
-pca_df = pd.DataFrame(data=pca_components, columns=['PC1', 'PC2'])
-
-# Plot PCA components
-plt.figure(figsize=(8, 6))
-sns.scatterplot(x='PC1', y='PC2', data=pca_df, alpha=0.5)
-plt.title('PCA Plot of Scaled Features', fontsize=16)
-plt.xlabel('Principal Component 1')
-plt.ylabel('Principal Component 2')
-plt.show()
-
-# COMMAND ----------
-
-# Extract principal components (eigenvectors)
-principal_components = pca.components_
-
-# Create a DataFrame to show the principal components
-components_df = pd.DataFrame(principal_components, columns=X_train.columns, index=[f'PC{i+1}' for i in range(principal_components.shape[0])])
-
-# Print principal components
-print("Principal Component Loadings (Eigenvectors):")
-print(components_df)
-
-# COMMAND ----------
-
-# Create a Linear Regression instance
-lr = LinearRegression()
-
-
-
-# Fit the model
-lr.fit(X_train_scaled, y_train)
-
-# Predict using the test set
-y_pred =  lr.predict(X_test_scaled)
-
-# Calculate and display metrics
-testing_score = r2_score(y_test, y_pred)
-mean_absolute_score = mean_absolute_error(y_test, y_pred)
-mean_sq_error = mean_squared_error(y_test, y_pred)
-
-# Display results
-print(f"R² Score: {testing_score:.4f}")
-print(f"Mean Absolute Error (MAE): {mean_absolute_score:.4f}")
-print(f"Mean Squared Error (MSE): {mean_sq_error:.4f}")
-
-# COMMAND ----------
-
-knn = KNeighborsRegressor()
-knn.fit(X_train, y_train)
-
-y_pred =  knn.predict(X_test)
-
-testing_score = r2_score(y_test, y_pred)
-mean_absolute_score = mean_absolute_error(y_test, y_pred)
-mean_sq_error = mean_squared_error(y_test, y_pred)
-
-# Display results
-print(f"R² Score: {testing_score:.4f}")
-print(f"Mean Absolute Error (MAE): {mean_absolute_score:.4f}")
-print(f"Mean Squared Error (MSE): {mean_sq_error:.4f}")
-
-
-
-# COMMAND ----------
-
-from sklearn.ensemble import RandomForestClassifier
-
-rd_clf = RandomForestClassifier()
-rd_clf.fit(X_train, y_train)
-
-y_pred_rd_clf = rd_clf.predict(X_test)
-
-acc_rd_clf = accuracy_score(y_test, y_pred_rd_clf)
-conf = confusion_matrix(y_test, y_pred_rd_clf)
-clf_report = classification_report(y_test, y_pred_rd_clf)
-
-print(f"Accuracy Score of Random Forest is : {acc_rd_clf}")
-print(f"Confusion Matrix : \n{conf}")
-print(f"Classification Report : \n{clf_report}")
-
-# COMMAND ----------
-
-from sklearn.tree import DecisionTreeClassifier
-
-dtc = DecisionTreeClassifier()
-dtc.fit(X_train, y_train)
-
-y_pred_dtc = dtc.predict(X_test)
-
-acc_dtc = accuracy_score(y_test, y_pred_dtc)
-conf = confusion_matrix(y_test, y_pred_dtc)
-clf_report = classification_report(y_test, y_pred_dtc)
-
-print(f"Accuracy Score of Decision Tree is : {acc_dtc}")
-print(f"Confusion Matrix : \n{conf}")
-print(f"Classification Report : \n{clf_report}")
-
-# COMMAND ----------
-
-from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
-
-
-lr = LinearRegression()
-lr.fit(X_train, y_train)
-
-y_pred =  lr.predict(X_test)
-
-testing_score = r2_score(y_test, y_pred)
-mean_absolute_score = mean_absolute_error(y_test, y_pred)
-mean_sq_error = mean_squared_error(y_test, y_pred)
-
-# COMMAND ----------
-
-mean_absolute_score
-
-# COMMAND ----------
-
-mean_sq_error
-
-# COMMAND ----------
-
-testing_score
-
-
-# COMMAND ----------
-
-plt.figure(figsize = (24, 12))
-
-corr = df.corr()
-sns.heatmap(corr, annot = True, linewidths = 1)
-plt.show()
-
-# COMMAND ----------
-
-import plotly.express as px
-
-# Create interactive heatmap using plotly
-fig = px.imshow(correlation_matrix, text_auto=True, aspect="auto", color_continuous_scale='RdBu_r', origin='lower')
-fig.update_layout(title='Interactive Correlation Heatmap', width=800, height=800)
-fig.show()
-
-# COMMAND ----------
-
-# Filter for strong correlations only (absolute value > 0.7)
-strong_corr = correlation_matrix[(correlation_matrix.abs() > 0.7) & (correlation_matrix != 1.0)].dropna(how='all', axis=0).dropna(how='all', axis=1)
-
-# Plot heatmap of strong correlations
-plt.figure(figsize=(12, 10))
-sns.heatmap(strong_corr, annot=True, cmap='coolwarm', fmt='.2f')
-plt.title("Heatmap of Strong Correlations (|corr| > 0.7)")
-plt.show()
-
-# COMMAND ----------
-
-# Create a clustered heatmap
-plt.figure(figsize=(12, 10))
-sns.clustermap(correlation_matrix, cmap='coolwarm', figsize=(12, 12), annot=False)
-plt.title("Clustered Heatmap of Correlations")
-plt.show()
-
-# COMMAND ----------
-
-# Unstack and sort the correlation pairs
-sorted_corr_pairs = correlation_matrix.unstack().sort_values(kind="quicksort", ascending=False)
-
-# Select the top N correlations (excluding 1.0 correlations)
-top_n_corr = sorted_corr_pairs[sorted_corr_pairs < 1].nlargest(20)
-
-# Plot top N correlations
-plt.figure(figsize=(10, 6))
-top_n_corr.plot(kind='bar', color='skyblue')
-plt.title("Top 20 Most Correlated Feature Pairs")
-plt.ylabel("Correlation Coefficient")
-plt.show()
-
-# COMMAND ----------
-
-# Visualize missing data using a heatmap
-plt.figure(figsize=(12, 8))
-sns.heatmap(final)df.isnull(), cbar=False, cmap='viridis')
-plt.title('Missing Values Heatmap')
-plt.show()
-
-
-# COMMAND ----------
-
-# Handle missing values
-# For 'company' and 'agent', fill missing values with 0 (assuming missing means no company/agent)
-df['company'].fillna(0, inplace=True)
-df['agent'].fillna(0, inplace=True)
-
-# For 'children', fill missing values with 0 (assuming missing means no children)
-df['children'].fillna(0, inplace=True)
-
-
-# COMMAND ----------
-
-# Verify that missing values have been handled
-print("Total missing values after imputation:", df.isnull().sum().sum())
-
-# COMMAND ----------
-
-# Check for duplicates
-print("Number of duplicate rows:", df.duplicated().sum())
-
-
-# COMMAND ----------
-
-# Remove duplicate rows if any
-df.drop_duplicates(inplace=True)
-
-# COMMAND ----------
-
-# Drop irrelevant columns
-# Assuming 'company' and 'agent' are not useful for this analysis
-df.drop(['company', 'agent', 'reservation_status_date'], axis=1, inplace=True)
-
-# COMMAND ----------
-
-# Convert 'reservation_status' to datetime if needed (not required here)
-# Convert 'arrival_date_year' to string if treating it as a categorical variable
-df['arrival_date_year'] = df['arrival_date_year'].astype(str)
-
-
-# COMMAND ----------
-
-# Convert 'children', 'babies', 'adults' to integer types
-df['children'] = df['children'].astype(int)
-df['babies'] = df['babies'].astype(int)
-df['adults'] = df['adults'].astype(int)
-
-
-# COMMAND ----------
-
-# Identify categorical variables
-categorical_features = df.select_dtypes(include=['object']).columns.tolist()
-print("Categorical features:", categorical_features)
-
-# COMMAND ----------
-
-# One-Hot Encoding for nominal categorical variables
-df_encoded = pd.get_dummies(df, columns=categorical_features, drop_first=True)
-
-# COMMAND ----------
-
-# Create new feature 'total_guests' as the sum of adults, children, and babies
-df_encoded['total_guests'] = df_encoded['adults'] + df_encoded['children'] + df_encoded['babies']
-
-# COMMAND ----------
-
-# Create new feature 'total_nights' as the sum of stays_in_weekend_nights and stays_in_week_nights
-df_encoded['total_nights'] = df_encoded['stays_in_weekend_nights'] + df_encoded['stays_in_week_nights']
-
-# COMMAND ----------
-
-# Plot 'adr' to identify outliers
-plt.figure(figsize=(8, 6))
-sns.boxplot(x=df_encoded['adr'])
-plt.title('Boxplot of ADR')
-plt.show()
-
-# COMMAND ----------
-
-# Remove outliers in 'adr' where values are excessively high
-# Define an upper limit (e.g., 99th percentile)
-upper_limit = df_encoded['adr'].quantile(0.99)
-df_encoded = df_encoded[df_encoded['adr'] <= upper_limit]
-
-# COMMAND ----------
-
-# Separate features and target variable
-X = df_encoded.drop('adr', axis=1)
-y = df_encoded['adr']
-
-# COMMAND ----------
-
-# Identify numerical features
-numerical_features = X.select_dtypes(include=[np.number]).columns.tolist()
-
-# Import StandardScaler
-from sklearn.preprocessing import StandardScaler
-
-# Initialize the scaler
-scaler = StandardScaler()
-
-# Fit and transform the numerical features
-X[numerical_features] = scaler.fit_transform(X[numerical_features])
-
-
-# COMMAND ----------
-
-fig1, ax = plt.subplots(figsize = (12, 10))
-
-sns.heatmap(df_encoded.corr(), annot = True)
-
-plt.show()
-
-# COMMAND ----------
-
-
+# MAGIC %md
+# MAGIC #End of Notebook

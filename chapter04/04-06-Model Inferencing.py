@@ -23,6 +23,24 @@
 
 # COMMAND ----------
 
+import json
+import mlflow
+import requests
+import mlflow.sklearn
+import pandas as pd
+
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #Retrieve a Databricks Token from the DataBricks Secret Scope
+
+# COMMAND ----------
+
 # Import the 'os' module, which provides a way to interact with the operating system.
 # The 'os' module allows you to set and retrieve environment variables, among other functionalities.
 import os
@@ -34,22 +52,6 @@ import os
 databricks_token = dbutils.secrets.get(scope="book", key="DATABRICKS_TOKEN")
 os.environ['DATABRICKS_TOKEN'] = databricks_token
 
-# Note: This is a sensitive access token, so make sure you do not expose it in your code.
-# In a production environment, it's recommended to use more secure ways to manage sensitive information,
-# such as using environment variable management tools or secrets management services (e.g., AWS Secrets Manager, Azure Key Vault).
-
-# COMMAND ----------
-
-import json
-import mlflow
-import requests
-import mlflow.sklearn
-import pandas as pd
-
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
 
 # COMMAND ----------
 
@@ -239,3 +241,8 @@ if (pred_df['Model Prediction'] == pred_df['Served Model Prediction']).all():
     print("The columns have the same values.")
 else:
     print("The columns have different values.")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #End of Notebook

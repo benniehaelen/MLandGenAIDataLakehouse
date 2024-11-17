@@ -165,7 +165,7 @@ X_test_scaled = scaler.transform(X_test)
 
 # The unique identifier for the MLflow run where the model was logged.
 # This ID corresponds to the specific experiment run in MLflow.
-run_id = "9410278920a74076a86803cddd3e982e"  
+run_id = "06ab7ac6a53c4431a0db34827220ddf6"  
 
 # The name of the model as it was saved during the experiment run.
 # This is the name you used when logging the model with MLflow.
@@ -209,11 +209,6 @@ num_ones = sum(1 for pred in y_pred if pred == 1)
 # Print the results
 print(f"Number of 0s: {num_zeros:,}")
 print(f"Number of 1s: {num_ones:,}")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC Load the model as a Spark UDF
 
 # COMMAND ----------
 
@@ -341,3 +336,8 @@ num_ones = sum(1 for pred in y_pred if pred == 1)
 # Print the results
 print(f"Number of 0s: {num_zeros:,}")
 print(f"Number of 1s: {num_ones:,}")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC #End of Notebook

@@ -28,16 +28,62 @@ from mlflow.tracking import MlflowClient
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Setup the  run_id and the model name
+# MAGIC #Prepare our Environment for model registration in Unity
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Create the Unit Catalog and Schema
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC
+# MAGIC -- Make sure the Catalog is created
+# MAGIC CREATE CATALOG IF NOT EXISTS `book_ai_ml_lakehouse`;
+# MAGIC
+# MAGIC -- Create the schema for the models
+# MAGIC CREATE SCHEMA IF NOT EXISTS book_ai_ml_lakehouse.registered_models;
+# MAGIC
+# MAGIC -- Make sure we can see the newly created schema
+# MAGIC SHOW SCHEMAS IN book_ai_ml_lakehouse
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ##Setup the  run_id and the Unity Model name
 
 # COMMAND ----------
 
 # The unique identifier for the MLflow run where the model was logged.
 # This ID corresponds to the specific experiment run in MLflow.
-run_id = "9410278920a74076a86803cddd3e982e"  
+run_id = "06ab7ac6a53c4431a0db34827220ddf6"  
 
-# This is the name that we give our model
+# The name assigned to the model. This will be used as a reference for the registered model.
 model_name = "hotel_booking_cancel_prediction"  
+
+# The catalog name in Unity Catalog, representing the top-level namespace.
+catalog_name = "book_ai_ml_lakehouse"
+
+# The schema name within the catalog, typically used for organizing registered models.
+schema_name = "registered_models"
+
+# Construct the full Unity Catalog model name, including catalog, schema, and model name.
+unity_model_name = f"{catalog_name}.{schema_name}.{model_name}"
+
+# Print the full model location in Unity Catalog.
+print(f"Unity Model Name: {unity_model_name}")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ##Make sure that we use the Unity Catalog for our registry
+
+# COMMAND ----------
+
+# Set the registry URI to Databricks Unity Catalog.
+# This tells MLflow to use Unity Catalog for managing the model registry.
+mlflow.set_registry_uri("databricks-uc")
 
 # COMMAND ----------
 
@@ -46,31 +92,38 @@ model_name = "hotel_booking_cancel_prediction"
 
 # COMMAND ----------
 
-# Register the model in MLflow's Model Registry.
-# The 'register_model()' function allows you to take a model that was logged during a run 
-# and register it in the MLflow Model Registry under a specific name.
-# This is useful for tracking versions of models and managing their lifecycle (e.g., staging, production).
+# Create an instance of the MlflowClient.
+# This client is used to interact with the MLflow Model Registry,
+# enabling operations such as registering models, managing versions, and transitioning their lifecycle stages.
+client = MlflowClient()
 
-# 'runs:/{run_id}/model' specifies the model's location in the MLflow tracking system.
-# It points to the model artifact saved during a specific run identified by 'run_id'.
-# 'run_id' is the unique identifier for the MLflow run where the model was trained and logged.
-# '/model' is the subpath to the model within that run.
+# Register the model in MLflow's Model Registry within Unity Catalog.
+# The 'register_model()' function associates a model artifact, logged during a specific MLflow run,
+# with a registered model name in the Unity Catalog. Unity Catalog provides centralized access control,
+# auditing, and lineage for models.
 
-# 'model_name' is the name you want to use to register the model in the MLflow Model Registry.
-# This allows you to track different versions of the model under this name.
+# 'runs:/{run_id}/model' specifies the path to the model artifact:
+# - 'run_id' is the unique identifier for the MLflow run where the model was logged.
+# - '/model' is the subpath indicating the location of the logged model artifact within the run.
 
-model_version = mlflow.register_model(f'runs:/{run_id}/model', model_name)
+# 'unity_model_name' is the name under which the model will be registered in the Unity Catalog Model Registry.
+# This name is unique within the catalog and helps track multiple versions of the model.
 
-# 'model_version' will store the version number of the newly registered model.
-# MLflow automatically tracks versions, so each time a new model is registered with the same name, 
-# it increments the version number.
+# The model will be registered in Unity Catalog, ensuring benefits such as centralized governance,
+# lineage tracking, and compatibility with the open-source MLflow client.
+model_version = mlflow.register_model(f'runs:/{run_id}/model', unity_model_name)
+
+# 'model_version' holds the metadata of the newly registered model version, including the version number.
+# Each time a model with the same name is registered, MLflow automatically increments the version number,
+# enabling version control and lifecycle management.
 
 # COMMAND ----------
 
-# Create an instance of the MlflowClient.
-# This client will be used to interact with the MLflow Model Registry to perform operations
-# like transitioning a model to different stages (e.g., Staging, Production).
-client = MlflowClient()
+# MAGIC %md
+# MAGIC #Examine all model versions in the Registry
+
+# COMMAND ----------
+
 
 # 'search_model_versions()' is a method provided by MlflowClient that returns details about
 # all the versions of a registered model. It queries the MLflow Model Registry for versions
@@ -79,7 +132,7 @@ client = MlflowClient()
 # 'model_name' is the name of the model that you want to search for in the Model Registry.
 # The f-string (f"name='{model_name}'") is used to dynamically insert the model's name into the search query.
 # This query will retrieve all the registered versions for the model with the given name.
-versions = client.search_model_versions(f"name='{model_name}'")
+versions = client.search_model_versions(f"name='{unity_model_name}'")
 
 # The 'versions' variable will contain a list of model version metadata, where each entry in the list
 # contains information about a specific version of the model, such as version number, stage (e.g., Production, Staging),
@@ -96,25 +149,10 @@ for version in versions:
 
 # COMMAND ----------
 
-# Transition the specified version of a registered model to a new stage in the MLflow Model Registry.
-# The stage can represent the lifecycle phase of the model, such as 'Staging', 'Production', or 'Archived'.
+# create "Champion" alias for version 1 of model "prod.ml_team.iris_model"
+client.set_registered_model_alias(unity_model_name, "Champion", 1)
 
-# 'client' is an instance of the MlflowClient, which allows programmatic interaction with MLflow's Model Registry.
+# COMMAND ----------
 
-client.transition_model_version_stage(
-    # The name of the model in the Model Registry. This should match the model's name 
-    # that was used when the model was first registered (e.g., 'Logistic_Regression_Model').
-    name = model_name,       
-
-    # The version number of the model you want to transition. 
-    # Each model can have multiple versions, and this specifies which one to transition.
-    # In this case, we're transitioning version 1.                             
-    version = "1",           
-
-    # The target stage to which you want to transition the model. 
-    # Common stages include:
-    # - 'Production': Indicates the model is ready for production use.
-    # - 'Staging': For models undergoing evaluation before production.
-    # - 'Archived': For older versions of the model that are no longer in use.
-    stage = 'Production'     
-)
+# MAGIC %md
+# MAGIC #End of Notebook
