@@ -3,7 +3,7 @@
 # MAGIC
 # MAGIC
 # MAGIC <img src= "https://cdn.oreillystatic.com/images/sitewide-headers/oreilly_logo_mark_red.svg"/>&nbsp;&nbsp;<font size="16"><b>AI, ML and GenAI in the Lakehouse<b></font></span>
-# MAGIC <img style="float: left; margin: 0px 15px 15px 0px;" src="https://learning.oreilly.com/covers/urn:orm:book:9781098139711/400w/" />  
+# MAGIC <img style="float: left; margin: 0px 15px 15px 0px; width:30%; height: auto;" src="https://i.imgur.com/FWzhbhX.jpeg"   />   
 # MAGIC
 # MAGIC
 # MAGIC  
@@ -37,7 +37,7 @@ from sklearn.linear_model import LogisticRegression
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #Retrieve a Databricks Token from the DataBricks Secret Scope
+# MAGIC #Retrieve a Token from the DataBricks Secret Scope
 
 # COMMAND ----------
 
@@ -123,56 +123,28 @@ X_test_scaled = scaler.transform(X_test)
 
 # COMMAND ----------
 
-# def create_tf_serving_json(data):
-#     return {'inputs': {name: data[name].tolist() for name in data.keys()} if isinstance(data, dict) else data.tolist()}
-
-# def score_model(dataset):
-#     url = 'https://adb-1376134742576436.16.azuredatabricks.net/serving-endpoints/cancel_prediction/invocations'
-#     headers = {'Authorization': f'Bearer {os.environ.get("DATABRICKS_TOKEN")}', 'Content-Type': 'application/json'}
-#     ds_dict = {'dataframe_split': dataset.to_dict(orient='split')} if isinstance(dataset, pd.DataFrame) else create_tf_serving_json(dataset)
-#     data_json = json.dumps(ds_dict, allow_nan=True)
-#     response = requests.request(method='POST', headers=headers, url=url, data=data_json)
-#     if response.status_code != 200:
-#         raise Exception(f'Request failed with status {response.status_code}, {response.text}')
-#     return response.json()
-
-# COMMAND ----------
-
 # MAGIC %md
-# MAGIC #Code from the Inferencing Engine
+# MAGIC #Copied Code from the Inferencing Engine
 
 # COMMAND ----------
 
-# Function to create a JSON structure that can be sent to a TensorFlow Serving endpoint
+import os
+import requests
+import numpy as np
+import pandas as pd
+import json
+
 def create_tf_serving_json(data):
-    # If 'data' is a dictionary, create a dictionary with the key 'inputs' and a list of values from the input data
-    # This is useful for handling TensorFlow models expecting a specific 'inputs' key
     return {'inputs': {name: data[name].tolist() for name in data.keys()} if isinstance(data, dict) else data.tolist()}
 
-# Function to send data to a deployed model endpoint and get the prediction
 def score_model(dataset):
-    # URL of the Databricks serving endpoint for the model
-    url = 'https://adb-1376134742576436.16.azuredatabricks.net/serving-endpoints/cancel_prediction/invocations'
-    
-    # Set up the headers, including an Authorization header with the Databricks token stored in environment variables
+    url = 'https://adb-1376134742576436.16.azuredatabricks.net/serving-endpoints/cancel_prediction_endpoint/invocations'
     headers = {'Authorization': f'Bearer {os.environ.get("DATABRICKS_TOKEN")}', 'Content-Type': 'application/json'}
-    
-    # Prepare the dataset in the correct format depending on whether it's a Pandas DataFrame or not
-    # If it's a DataFrame, we use the 'dataframe_split' orientation for efficient transmission of data
-    # Otherwise, we convert the data to a format compatible with TensorFlow Serving
     ds_dict = {'dataframe_split': dataset.to_dict(orient='split')} if isinstance(dataset, pd.DataFrame) else create_tf_serving_json(dataset)
-    
-    # Convert the dataset dictionary to a JSON string, allowing NaN values to be included in the JSON (common in Pandas data)
     data_json = json.dumps(ds_dict, allow_nan=True)
-    
-    # Send a POST request to the model endpoint with the prepared JSON data and headers
     response = requests.request(method='POST', headers=headers, url=url, data=data_json)
-    
-    # Check if the request was successful (status code 200), otherwise raise an exception with the error details
     if response.status_code != 200:
         raise Exception(f'Request failed with status {response.status_code}, {response.text}')
-    
-    # Return the JSON response from the model, which contains the prediction(s)
     return response.json()
 
 
@@ -227,7 +199,6 @@ pred_df = pd.DataFrame({
 # Display the DataFrame with both predictions for comparison
 # This will print the DataFrame with the predictions side-by-side for each of the test samples
 print(pred_df)
-
 
 # COMMAND ----------
 

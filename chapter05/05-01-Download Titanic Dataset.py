@@ -22,8 +22,9 @@
 # MAGIC            2-2 - Copy the local file to our DBFS datasets location
 # MAGIC         3 - Prepare and save the Dataset
 # MAGIC            3-1 - Read the source file from our dbfs location
-# MAGIC            3-2 - Create our Catalog and Schema (if needed)
-# MAGIC            3-3 - Save our Dataframe as a Delta Table in our Catalog
+# MAGIC            3-2 - Convert the columns to the correct data types
+# MAGIC            3-3 - Create our Catalog and Schema (if needed)
+# MAGIC            3-4 - Save our Dataframe as a Delta Table in our Catalog
 # MAGIC               
 # MAGIC
 
