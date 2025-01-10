@@ -1,13 +1,12 @@
 # Databricks notebook source
 # MAGIC %md-sandbox
-# MAGIC
 # MAGIC <img src= "https://cdn.oreillystatic.com/images/sitewide-headers/oreilly_logo_mark_red.svg"/>&nbsp;&nbsp;<font size="16"><b>AI, ML and GenAI in the Lakehouse<b></font></span>
-# MAGIC <img style="float: left; margin: 0px 15px 15px 0px;" src="https://learning.oreilly.com/covers/urn:orm:book:9781098139711/400w/" />  
+# MAGIC <img style="float: left; margin: 0px 15px 15px 0px; width:30%; height: auto;" src="https://i.imgur.com/FWzhbhX.jpeg"   />  
 # MAGIC
 # MAGIC
 # MAGIC  
 # MAGIC   
-# MAGIC    Name:          chapter 04-03-Regression with AutoML
+# MAGIC    Name:          chapter 05-04-Regression with AutoML
 # MAGIC  
 # MAGIC    Author:    Bennie Haelen
 # MAGIC    Date:      10-24-2024
@@ -15,12 +14,20 @@
 # MAGIC    Purpose:   This notebook will perform EDA on the dataset, and will run AutoML using the Python API
 # MAGIC                  
 # MAGIC       An outline of the different sections in this notebook:
-# MAGIC         1 - Make sure kaggle and kagglehub are installed
-# MAGIC         2 - Use KaggleHub to download the Kaggle Dataset
-# MAGIC         3 - Copy the local file to our DBFS datasets location
-# MAGIC         4 - Read the source file from our dbfs location
-# MAGIC         5 - Create our Catalog and Schema (if needed)
-# MAGIC         6 - Save our Dataframe as a Delta Table in our Catalog
+# MAGIC         1 - Read the Delta table witeh the housing prices
+# MAGIC         2 - Start the modeling phase
+# MAGIC             2-1 - Perform a train/test split of the data
+# MAGIC             2-2 - Investigate the Shape of the datasets
+# MAGIC             2-3 - Convert our training Pandas Dataframe to Spark
+# MAGIC             2-4 - Start the AutoML Regression
+# MAGIC         3 - Study the results of the regression and make predictions
+# MAGIC             3-1 - Retrieve the URI of the best model
+# MAGIC             3-2 - Create the Test Features
+# MAGIC             3-3 - Load the best model from the MLflow function
+# MAGIC             3-4 - Use the model to make prediction
+# MAGIC             3-5 - Combine predictions and actual
+# MAGIC             3-6 - Create a plot comparing the actuals with the predictions
+# MAGIC             3-7 - Create a joint plot of actual vs predicted
 # MAGIC               
 # MAGIC
 

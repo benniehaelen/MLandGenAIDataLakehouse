@@ -1,8 +1,7 @@
 # Databricks notebook source
 # MAGIC %md-sandbox
-# MAGIC
 # MAGIC <img src= "https://cdn.oreillystatic.com/images/sitewide-headers/oreilly_logo_mark_red.svg"/>&nbsp;&nbsp;<font size="16"><b>AI, ML and GenAI in the Lakehouse<b></font></span>
-# MAGIC <img style="float: left; margin: 0px 15px 15px 0px;" src="https://learning.oreilly.com/covers/urn:orm:book:9781098139711/400w/" />  
+# MAGIC <img style="float: left; margin: 0px 15px 15px 0px; width:30%; height: auto;" src="https://i.imgur.com/FWzhbhX.jpeg"   /> 
 # MAGIC
 # MAGIC
 # MAGIC  
@@ -15,12 +14,13 @@
 # MAGIC    Purpose:   This notebook will perform EDA on the dataset, and will run AutoML using the Python API
 # MAGIC                  
 # MAGIC       An outline of the different sections in this notebook:
-# MAGIC         1 - Make sure kaggle and kagglehub are installed
-# MAGIC         2 - Use KaggleHub to download the Kaggle Dataset
-# MAGIC         3 - Copy the local file to our DBFS datasets location
-# MAGIC         4 - Read the source file from our dbfs location
-# MAGIC         5 - Create our Catalog and Schema (if needed)
-# MAGIC         6 - Save our Dataframe as a Delta Table in our Catalog
+# MAGIC         1 - Read our Delta table with the CA Housing Prices
+# MAGIC         2 - Start our EDA and Data Cleanup
+# MAGIC         3 - Process the data outliers
+# MAGIC         4 - Investigate the Categorical Columns
+# MAGIC         5 - Perform additional EDA
+# MAGIC         6 - Write the Pandas Dataframe to a Delta Table
+# MAGIC         7 - Fix the column names to be valid Unity Columns
 # MAGIC               
 # MAGIC
 

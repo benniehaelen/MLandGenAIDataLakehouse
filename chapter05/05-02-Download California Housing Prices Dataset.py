@@ -1,13 +1,12 @@
 # Databricks notebook source
 # MAGIC %md-sandbox
-# MAGIC
 # MAGIC <img src= "https://cdn.oreillystatic.com/images/sitewide-headers/oreilly_logo_mark_red.svg"/>&nbsp;&nbsp;<font size="16"><b>AI, ML and GenAI in the Lakehouse<b></font></span>
-# MAGIC <img style="float: left; margin: 0px 15px 15px 0px;" src="https://learning.oreilly.com/covers/urn:orm:book:9781098139711/400w/" />  
+# MAGIC <img style="float: left; margin: 0px 15px 15px 0px; width:30%; height: auto;" src="https://i.imgur.com/FWzhbhX.jpeg"   /> 
 # MAGIC
 # MAGIC
 # MAGIC  
 # MAGIC   
-# MAGIC    Name:          chapter 04-01-Download Calfiornia Housing Prices Dataset
+# MAGIC    Name:          chapter 05-01-Download Calfiornia Housing Prices Dataset
 # MAGIC  
 # MAGIC    Author:    Bennie Haelen
 # MAGIC    Date:      10-24-2024
