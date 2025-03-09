@@ -2,28 +2,42 @@
 # MAGIC %md-sandbox
 # MAGIC
 # MAGIC <img src= "https://cdn.oreillystatic.com/images/sitewide-headers/oreilly_logo_mark_red.svg"/>&nbsp;&nbsp;<font size="16"><b>AI, ML and GenAI in the Lakehouse<b></font></span>
-# MAGIC <img style="float: left; margin: 0px 15px 15px 0px;" src="https://learning.oreilly.com/covers/urn:orm:book:9781098139711/400w/" />  
+# MAGIC <img style="float: left; margin: 0px 15px 15px 0px; width:30%; height: auto;" src="https://i.imgur.com/pQvJTVf.jpeg"   />   
 # MAGIC
 # MAGIC
 # MAGIC  
 # MAGIC   
-# MAGIC    Name:          chapter 04-04-NYC Yellow Taxi Dataset with MLlib
+# MAGIC    Name:          07-01-Machine Learning at Scale with the NYC Taxi Dataset
 # MAGIC  
 # MAGIC    Author:    Bennie Haelen
 # MAGIC    Date:      10-28-2024
 # MAGIC
-# MAGIC    Purpose:   This notebook downloads the California Housing Prices dataset from the Kaggle Website, and saves it as a Unity Table
+# MAGIC    Purpose:   This notebook demonstrates machine learning at scale with Spark and MLlib
 # MAGIC                  
 # MAGIC       An outline of the different sections in this notebook:
-# MAGIC         1 - Load all 12 Yellow Taxi Parquet Files into a Spark Dataframe
-# MAGIC            1-1 - Make sure kaggle and kagglehub are installed
-# MAGIC         2 - Use KaggleHub to download the Kaggle Dataset
-# MAGIC            2-1 - Download the dataset to a local path
-# MAGIC            2-2 - Copy the local file to our DBFS datasets location
-# MAGIC         3 - Prepare and Save the Dataset
-# MAGIC            3-1 - Read the source file from our dbfs location
-# MAGIC            3-2 - Create our Catalog and Schema (if needed)
-# MAGIC            3-3 - Save our Dataframe as a Delta Table in our Catalog
+# MAGIC         1 - Data Ingestion and Initial Exploration
+# MAGIC            1-1 - Load the data into a Spark DataFrame
+# MAGIC            1-2 - Get an estimate on the row count by sampling
+# MAGIC            1-3 - Perform Type Conversions
+# MAGIC         2 - Data Preprocessing at Scale
+# MAGIC            2-1 - Add a trip_duration column 
+# MAGIC            2-2 - Filter out trips with unrealistic durations or distances
+# MAGIC            2-3 - Drop the rows with missing critical values
+# MAGIC         3 - Perform Feature Engineering
+# MAGIC            3-1 - Extract the Temporal Features
+# MAGIC            3-2 - Impute the mean in the numerical features
+# MAGIC            3-3 - Handle Missing Values in Categorical Features
+# MAGIC         4 - Feature Transformation and Vectorization
+# MAGIC            4-1 - Setting up Indexers and Encoders
+# MAGIC            4-2 - Setting up the VectorAssembler
+# MAGIC            4-3 - Executing the Indexers
+# MAGIC            4-4 - Executing the Encoders
+# MAGIC            4-5 - Using the VectorAssember to create our Features Column
+# MAGIC            4-6 - Finalizing the Dataset
+# MAGIC         5 - Model Training at Scale
+# MAGIC            5-1 - Splitting the Data
+# MAGIC            5-2 - Training a Gradient Boosted Tree Regressor
+# MAGIC            5-3 - Evaluating the Model
 # MAGIC               
 # MAGIC
 
@@ -113,22 +127,12 @@ print(f"Approximate number of rows: {approx_row_count:,}")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Print out the schema of the DataFrame
-
-# COMMAND ----------
-
-# Display the schema
-taxi_df.printSchema()
-
-# COMMAND ----------
-
-# MAGIC %md
 # MAGIC ##Perform Type Conversions
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC From the above, we can see we don't have correct datatypes for all columns, so let's conveert the the correct types. We need to do the following conversions:
+# MAGIC From the above, we can see we don't have correct datatypes for all columns, so let's convert the the correct types. We need to do the following conversions:
 # MAGIC
 # MAGIC * **Timestamps**: Convert to timestamp type.
 # MAGIC * **IDs**: Convert to integer type.
@@ -324,7 +328,7 @@ taxi_df = taxi_df.fillna({col: -1 for col in categorical_columns})
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Encoding Categorial Values
+# MAGIC ##Setting up Indexers and Encoders
 
 # COMMAND ----------
 
@@ -345,17 +349,22 @@ encoders = [
     for column in categorical_columns
 ]
 
+# COMMAND ----------
+
+# Print out the number of indexers and encoders
+print(f"Number of Indexers: {len(indexers)}")
+print(f"Number of Encoders: {len(encoders)}")
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Assembling Features
+# MAGIC ##Setting up the VectorAssembler
 
 # COMMAND ----------
 
 
 # Define the input columns for the assembler
-assembler_input_cols = numerical_cols + [column + "_encoded" for column in categorical_columns]
+assembler_input_cols = [column + "_encoded" for column in categorical_columns] + numerical_cols
 
 # VectorAssembler for combining all numerical and encoded categorical features into a single 'features' column
 # 'inputCols' specifies the list of columns to be combined into a feature vector
@@ -364,27 +373,55 @@ assembler_input_cols = numerical_cols + [column + "_encoded" for column in categ
 assembler = VectorAssembler(
     inputCols=assembler_input_cols,
     outputCol='features',
-    handleInvalid='skip'
 )
 
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ##Executing the indexers
+
+# COMMAND ----------
+
+# Start with the original DataFrame
+df_indexed = taxi_df  
+
+# Loop over each indexer
+for indexer in indexers:
+    df_indexed = indexer.fit(df_indexed).transform(df_indexed)
+
+# Print the resulting schema
+df_indexed.printSchema()  # Verify indexed columns are created
 
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Build the Pipeline
+# MAGIC ##Executing the Encoders
 
 # COMMAND ----------
 
-# Create a Pipeline to sequentially apply the transformations
-# The pipeline includes indexers, encoders, and the feature assembler as stages
-pipeline = Pipeline(stages=indexers + encoders + [assembler])
+# Start with the indexed DataFrame
+df_encoded = df_indexed 
 
-# Fit the pipeline to the data and transform it
-# The 'fit()' method trains the indexers and encoders on the input DataFrame
-# The 'transform()' method applies the transformations to create the final prepared DataFrame
-df_prepared = pipeline.fit(taxi_df).transform(taxi_df)
+# Loop over each encoder
+for encoder in encoders:
+    df_encoded = encoder.fit(df_encoded).transform(df_encoded)
 
+# Print out the resulting schema
+df_encoded.printSchema()  
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ##Using the VectorAssember to create our Features Column
+
+# COMMAND ----------
+
+# Step 3: Apply VectorAssembler
+df_assembled = assembler.transform(df_encoded)
+
+# The schema Should now contain 'features'
+df_assembled.printSchema() 
 
 # COMMAND ----------
 
@@ -397,20 +434,13 @@ df_prepared = pipeline.fit(taxi_df).transform(taxi_df)
 # Select the final dataset with only the 'features' column and the target column 'trip_duration'
 # The 'features' column contains the vector of all input features (numerical + one-hot encoded categorical)
 # The 'trip_duration' column serves as the target variable for the model
-df_final = df_prepared.select(['features', 'trip_duration'])
-
+df_final = df_assembled.select(['features', 'trip_duration'])
 # Rename the 'trip_duration' column to 'label' for compatibility with Spark ML models
 # Spark ML expects the target variable to be named 'label' by default during training
 df_final = df_final.withColumnRenamed('trip_duration', 'label')
 
-
-# COMMAND ----------
-
-df_prepared.columns
-
-# COMMAND ----------
-
-display(df_prepared)
+# Print out the final columns
+df_final.columns
 
 # COMMAND ----------
 
@@ -440,7 +470,7 @@ dbutils.fs.rm(delta_path, recurse=True)
 # 'format("delta")' specifies that the data should be written in Delta format
 # 'mode("overwrite")' ensures that any existing data in the directory is replaced by the new data
 # 'save(delta_path)' writes the Delta table to the specified path
-df_prepared.write.format("delta").mode("overwrite").save(delta_path)
+df_final.write.format("delta").mode("overwrite").save(delta_path)
 
 # COMMAND ----------
 
@@ -455,43 +485,6 @@ df_prepared.write.format("delta").mode("overwrite").save(delta_path)
 # This operation improves query performance by reducing I/O and enabling faster data scans
 # The f-string dynamically inserts the path of the Delta table to be optimized
 spark.sql(f"OPTIMIZE '{DELTA_NYC_DATASET_PATH}'")
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC #Data Partitioning and Caching
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ##Repartitioning the Data
-
-# COMMAND ----------
-
-# Repartition the DataFrame based on 'pickup_year' and 'pickup_month' columns
-# This operation redistributes the data across partitions based on the values in 'pickup_year' and 'pickup_month'
-# It ensures that all rows with the same 'pickup_year' and 'pickup_month' are grouped into the same partition
-# This improves performance for queries that filter by year and month, as it reduces the amount of data scanned
-df_partitioned = df_prepared.repartition('pickup_year', 'pickup_month')
-
-# Verify the number of partitions in the repartitioned DataFrame
-# 'rdd.getNumPartitions()' returns the number of partitions in the underlying RDD of the DataFrame
-# This helps confirm that the data has been redistributed across the specified number of partitions
-print("Number of partitions:", df_partitioned.rdd.getNumPartitions())
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ##Caching the DataFrame
-# MAGIC
-
-# COMMAND ----------
-
-# Cache the DataFrame to improve performance during iterative processing
-# The 'cache()' method stores the DataFrame in memory, making subsequent operations faster
-# It is useful when the DataFrame is accessed multiple times during the same session or workflow
-# Caching reduces the need to recompute or reload data from storage, speeding up execution for iterative tasks
-df_partitioned.cache()
 
 # COMMAND ----------
 

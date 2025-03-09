@@ -8,7 +8,7 @@
 # MAGIC
 # MAGIC  
 # MAGIC   
-# MAGIC    Name:          chapter 05-7-Feature Lookup
+# MAGIC    Name:          chapter 05-01-Dowload the Titanic Dataset
 # MAGIC  
 # MAGIC    Author:    Bennie Haelen
 # MAGIC    Date:      12-24-2024
@@ -16,44 +16,16 @@
 # MAGIC    Purpose:   This notebook will read the customer transaction analysis dataset from Kaggle and transform the data into features
 # MAGIC                  
 # MAGIC       An outline of the different sections in this notebook:
-# MAGIC         1 - Read the Delta table witeh the housing prices
-# MAGIC         2 - Start the modeling phase
-# MAGIC             2-1 - Perform a train/test split of the data
-# MAGIC             2-2 - Investigate the Shape of the datasets
-# MAGIC             2-3 - Convert our training Pandas Dataframe to Spark
-# MAGIC             2-4 - Start the AutoML Regression
-# MAGIC         3 - Study the results of the regression and make predictions
-# MAGIC             3-1 - Retrieve the URI of the best model
-# MAGIC             3-2 - Create the Test Features
-# MAGIC             3-3 - Load the best model from the MLflow function
-# MAGIC             3-4 - Use the model to make prediction
-# MAGIC             3-5 - Combine predictions and actual
-# MAGIC             3-6 - Create a plot comparing the actuals with the predictions
-# MAGIC             3-7 - Create a joint plot of actual vs predicted"   /> 
+# MAGIC         1 - Use KaggleHub to download the dataset
+# MAGIC             1-1 - Download the dataset to a local path
+# MAGIC             2-2 - Copy the local file to our DBFS datasets location
+# MAGIC         2 - Prepare and save the Dataset
+# MAGIC             2-1 - Read the source file from our dbfs location
+# MAGIC             2-2 - Convert the columns to the correct data types
+# MAGIC             2-3 - Create our Catalog and Schema (if needed)
+# MAGIC             2-4 - Save our Dataframe as a Delta Table in our Catalog
 # MAGIC
-# MAGIC
-# MAGIC  
-# MAGIC   
-# MAGIC    Name:          chapter 05-01-Download Titanic Dataset
-# MAGIC  
-# MAGIC    Author:    Bennie Haelen
-# MAGIC    Date:      10-23-2024
-# MAGIC
-# MAGIC    Purpose:   This notebook downloads the titanic dataset from the Kaggle Website, and saves it as a Unity Table
-# MAGIC                  
-# MAGIC       An outline of the different sections in this notebook:
-# MAGIC         1 - Handle the Pre-Requisites
-# MAGIC            1-1 - Make sure kaggle and kagglehub are installed
-# MAGIC         2 - Use KaggleHub to download the Kaggle Dataset
-# MAGIC            2-1 - Download the dataset to a local path
-# MAGIC            2-2 - Copy the local file to our DBFS datasets location
-# MAGIC         3 - Prepare and save the Dataset
-# MAGIC            3-1 - Read the source file from our dbfs location
-# MAGIC            3-2 - Convert the columns to the correct data types
-# MAGIC            3-3 - Create our Catalog and Schema (if needed)
-# MAGIC            3-4 - Save our Dataframe as a Delta Table in our Catalog
-# MAGIC               
-# MAGIC
+# MAGIC             
 
 # COMMAND ----------
 
