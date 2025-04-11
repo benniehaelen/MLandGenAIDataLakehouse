@@ -559,6 +559,41 @@ print(f"Test RMSE: {rmse:.2f} minutes")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ##Hyperparameter Tuning with Cross-Validation
+
+# COMMAND ----------
+
+from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
+from pyspark.ml.evaluation import RegressionEvaluator
+
+# Build a parameter grid to search for the best hyperparameters
+paramGrid = ParamGridBuilder() \
+    .addGrid(gbt.maxDepth, [5, 7, 9]) \
+    .addGrid(gbt.maxIter, [50, 100]) \
+    .addGrid(gbt.stepSize, [0.05, 0.1, 0.2]) \
+    .build()
+
+# Define a RegressionEvaluator to evaluate RMSE
+evaluator = RegressionEvaluator(labelCol="label", predictionCol="prediction", metricName="rmse")
+
+# Set up a 3-fold CrossValidator
+cv = CrossValidator(estimator=gbt, 
+                    estimatorParamMaps=paramGrid, 
+                    evaluator=evaluator, 
+                    numFolds=3)
+
+# Run cross-validation on the training data
+cvModel = cv.fit(train_data)
+
+# Use the best model to generate predictions on the test set
+predictions = cvModel.transform(test_data)
+optimized_rmse = evaluator.evaluate(predictions)
+print(f"Optimized RMSE: {optimized_rmse:.2f} minutes")
+
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC #Hyperparameter Tuning with HyperOpt
 # MAGIC Optimize model performance by tuning hyperparameters using HyperOpt with SparkTrials.
 
@@ -758,7 +793,7 @@ spark.conf.set("spark.sql.shuffle.partitions", "200")
 # 'spark.executor.memory' defines the memory available for each executor running on the cluster
 # Allocating 8 GB of memory per executor helps handle large data processing and model training tasks
 # Adjust this value based on the size of your data and the available memory on your cluster
-spark.conf.set("spark.executor.memory", "8g")
+#spark.conf.set("spark.executor.memory", "8g")
 
 # Set the number of CPU cores allocated to each executor to 4
 # 'spark.executor.cores' specifies the number of CPU cores assigned to each executor
