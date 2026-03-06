@@ -1,27 +1,48 @@
 # Databricks notebook source
 # MAGIC %md-sandbox
+# MAGIC <div style="display: flex; align-items: flex-start; gap: 2rem; margin-bottom: 1rem;">
+# MAGIC   <img
+# MAGIC     src="https://i.imgur.com/ITL8dZE.jpeg"
+# MAGIC     style="width: 200px; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);"
+# MAGIC     alt="Book Cover"/>
+# MAGIC   <div>
+# MAGIC     <div style="margin-bottom: 0.5rem;">
+# MAGIC       <img src="https://cdn.oreillystatic.com/images/sitewide-headers/oreilly_logo_mark_red.svg" style="height: 24px; vertical-align: middle;"/>
+# MAGIC       <span style="font-size: 1.5rem; font-weight: bold; vertical-align: middle;">&nbsp;ML and Generative AI in the Data Lakehouse</span>
+# MAGIC     </div>
+# MAGIC     <p style="margin: 0.3rem 0;"><b>Name:</b> chapter 03-02-Feature Engineering</p>
+# MAGIC     <p style="margin: 0.3rem 0;"><b>Author:</b> Bennie Haelen</p>
+# MAGIC     <p style="margin: 0.3rem 0;"><b>Date:</b> 1-27-2026</p>
+# MAGIC     <p style="margin: 0.5rem 0;"><b>Purpose:</b> This notebook performs the feature engineering for chapter 4 of the book: <i>Machine Learning Use Case with MLflow</i></p>
+# MAGIC   </div>
+# MAGIC </div>
 # MAGIC
-# MAGIC <img src= "https://cdn.oreillystatic.com/images/sitewide-headers/oreilly_logo_mark_red.svg"/>&nbsp;&nbsp;<font size="16"><b>AI, ML and GenAI in the Lakehouse<b></font></span>
-# MAGIC <img style="float: left; margin: 0px 15px 15px 0px; width:30%; height: auto;" src="https://i.imgur.com/FWzhbhX.jpeg"   />    
+# MAGIC <p style="margin: 1rem 0 0.5rem 0; font-size: 1.2rem;"><b>Table of Contents</b></p>
 # MAGIC
+# MAGIC <pre style="margin-left: 1rem; font-family: monospace; font-size: 0.9rem;">
+# MAGIC   1. Read the Hotel Bookings CSV File and gather basic info
+# MAGIC   2. Handle Missing Data
+# MAGIC         2.1 Question: From what country originate mosts of the guests?
+# MAGIC         2.2 Question: How much do guests pay per room per night?
+# MAGIC         2.3 Question: How does the price vary per night over the year?
+# MAGIC         2.3 Question: Which are the busy months?
+# MAGIC         2.4 Question: How long do people stay at the hotels?
+# MAGIC   3. Additional Data Cleaning
+# MAGIC         3.1 The cancelation rate of city hotels is higher than resort hotels.
+# MAGIC         3.2 The earlier the booking made, higher the chances of cancellation.
+# MAGIC         3.3 Bookings for longer durations have lower cancellations
+# MAGIC         3.4 A repeated guest is less likely to cancel current booking.
+# MAGIC         3.5 Higher previous cancellations lead to cancellation of current bookings.
+# MAGIC         3.6 If room assigned is not the reserved room type, customer might cancel.
+# MAGIC         3.7 If # of booking changes made is high, chance of cancellation is low.
+# MAGIC         3.8 Refundable bookings or those without deposit have higher cancellations.
+# MAGIC         3.9 If the # of days in waiting list is high, cancelations are higher
+# MAGIC   4. Encoding Categorical Features
 # MAGIC
-# MAGIC  
-# MAGIC   
-# MAGIC    Name:          chapter 04-02-Feature Engineering
-# MAGIC  
-# MAGIC    Author:    Bennie Haelen
-# MAGIC    Date:      01-2025
+# MAGIC   5. Correlation Analysis
 # MAGIC
-# MAGIC    Purpose:   This notebook performs feature engineering for the hotel booking cancellation prediction use case.
-# MAGIC               Features are stored in Unity Catalog using Feature Engineering in Unity Catalog.
-# MAGIC                  
-# MAGIC       An outline of the different sections in this notebook:
-# MAGIC         1 - Read the hotel-booking.csv and display key statistics
-# MAGIC         2 - Handle Missing Data
-# MAGIC         3 - Perform Data Cleaning
-# MAGIC         4 - Encode Categorical Features
-# MAGIC         5 - Correlation Analysis
-# MAGIC         6 - Create Feature Table in Unity Catalog
+# MAGIC   6. Create the Feature Table in Unity Catalog
+# MAGIC </pre>
 
 # COMMAND ----------
 
@@ -274,7 +295,7 @@ else:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Further Data Cleaning
+# MAGIC # Additional Data Cleaning
 
 # COMMAND ----------
 
