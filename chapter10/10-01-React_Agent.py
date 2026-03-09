@@ -36,28 +36,27 @@
 # MAGIC       <ol style="padding-left:1.25rem; margin:0; color:#333;">
 # MAGIC         <li>Notebook Initialization
 # MAGIC           <ul style="margin-top:0.2rem;">
-# MAGIC             <li>1.1 Install Required Libraries</li>
-# MAGIC             <li>1.2 Import Statements</li>
-# MAGIC             <li>1.3 Enable MLflow Autologging</li>
+# MAGIC             <li>Install Required Libraries</li>
+# MAGIC             <li>Import Statements</li>
+# MAGIC             <li>Enable MLflow Autologging</li>
 # MAGIC           </ul>
 # MAGIC         </li>
 # MAGIC         <li>Set Up the Lakehouse Environment</li>
 # MAGIC         <li>Define the Agent Tools
 # MAGIC           <ul style="margin-top:0.2rem;">
-# MAGIC             <li>3.1 DatabricksQueryTool</li>
-# MAGIC             <li>3.2 SchemaInfoTool</li>
-# MAGIC             <li>3.3 TrendCalculatorTool</li>
+# MAGIC             <li>DatabricksQueryTool</li>
+# MAGIC             <li>SchemaInfoTool</li>
+# MAGIC             <li>TrendCalculatorTool</li>
 # MAGIC           </ul>
 # MAGIC         </li>
 # MAGIC         <li>ReAct Agent Implementation</li>
-# MAGIC         <li>Simulated Agent for Offline Demonstration</li>
 # MAGIC         <li>Agent Invocation
 # MAGIC           <ul style="margin-top:0.2rem;">
-# MAGIC             <li>6.1 ReAct Trace Helper</li>
-# MAGIC             <li>6.2 Retrieve API Key and Configure Environment</li>
-# MAGIC             <li>6.3 Question 1: Diagnose the Engagement Drop</li>
-# MAGIC             <li>6.4 Question 2: Identify the Lowest-Engagement Premium Customer</li>
-# MAGIC             <li>6.5 Question 3: Memory Follow-Up</li>
+# MAGIC             <li>ReAct Trace Helper</li>
+# MAGIC             <li>Retrieve API Key and Configure Environment</li>
+# MAGIC             <li>Question 1: Diagnose the Engagement Drop</li>
+# MAGIC             <li>Question 2: Identify the Lowest-Engagement Premium Customer</li>
+# MAGIC             <li>Question 3: Memory Follow-Up</li>
 # MAGIC           </ul>
 # MAGIC         </li>
 # MAGIC       </ol>
@@ -429,98 +428,6 @@ def setup_lakehouse_environment():
             ORDER BY 1
         """)
     )
-
-# COMMAND ----------
-
-# def setup_lakehouse_environment():
-#     """
-#     Creates Bronze, Silver, and Gold schemas and populates them with sample
-#     data. Running this function makes the notebook fully self-contained:
-#     no external data sources are required.
-
-#     Notes:
-#         overwriteSchema=true is set on all writes so the function can be
-#         re-run safely after any column-level schema changes without a
-#         Delta schema mismatch error.
-
-#         freq="min" is used in date_range calls instead of the deprecated
-#         "T" alias, which was removed in pandas 2.2.
-#     """
-#     print("Setting up the Databricks Lakehouse environment...")
-
-#     # Set the target catalog for the session
-#     current_catalog = "book_ai_ml_lakehouse"
-#     spark.catalog.setCurrentCatalog(current_catalog)
-#     print(f"Using catalog: '{spark.catalog.currentCatalog()}'")
-
-#     # Create Bronze, Silver, and Gold schemas if they do not already exist
-#     for layer in ["bronze", "silver", "gold"]:
-#         spark.sql(f"CREATE SCHEMA IF NOT EXISTS {current_catalog}.{layer}")
-#     print("Schemas created successfully.")
-
-#     # ── Gold layer: monthly aggregated engagement metrics ────────────────────
-#     # This is the first table the agent queries to confirm the engagement drop.
-#     gold_data = {
-#         "month":                    pd.to_datetime(["2025-07-31", "2025-06-30", "2025-05-31"]),
-#         "avg_engagement_premium":   [71.0, 83.0, 85.0],
-#         "avg_engagement_standard":  [60.0, 62.0, 64.0],
-#         "total_revenue":            [250000.0, 245000.0, 240000.0],
-#         "premium_customer_count":   [1050, 1045, 1040],
-#     }
-#     (spark.createDataFrame(pd.DataFrame(gold_data))
-#          .write
-#          .mode("overwrite")
-#          .option("overwriteSchema", "true")
-#          .saveAsTable(f"{current_catalog}.gold.monthly_engagement"))
-
-#     # ── Silver layer: customer profiles ──────────────────────────────────────
-#     # Contains the tier field the agent uses to filter premium customers.
-#     # engagement_score allows the agent to identify the lowest-engagement
-#     # customer. lifetime_value supports value-based follow-up questions.
-#     silver_customers_data = {
-#         "customer_id":      list(range(101, 111)),
-#         "tier":             ["premium", "standard"] * 5,
-#         "signup_date":      pd.to_datetime(pd.date_range("2024-01-01", periods=10)),
-#         "lifetime_value":   [500 + i * 100 for i in range(10)],
-#         "engagement_score": [71, 45, 83, 50, 68, 42, 79, 55, 62, 48],
-#     }
-#     (spark.createDataFrame(pd.DataFrame(silver_customers_data))
-#          .write
-#          .mode("overwrite")
-#          .option("overwriteSchema", "true")
-#          .saveAsTable(f"{current_catalog}.silver.customer_profiles"))
-
-#     # ── Silver layer: session summaries ──────────────────────────────────────
-#     # Derived from the bronze clickstream. The agent drills into this table
-#     # to test the hypothesis that session duration declined alongside engagement.
-#     silver_sessions_data = {
-#         "session_id":       [f"s{i}" for i in range(20)],
-#         "customer_id":      [101 + (i % 10) for i in range(20)],
-#         "session_date":     pd.to_datetime(pd.date_range("2025-07-15", periods=20)),
-#         "duration_minutes": [10 + (i % 15) for i in range(20)],
-#         "converted":        [i % 3 == 0 for i in range(20)],
-#     }
-#     (spark.createDataFrame(pd.DataFrame(silver_sessions_data))
-#          .write
-#          .mode("overwrite")
-#          .option("overwriteSchema", "true")
-#          .saveAsTable(f"{current_catalog}.silver.session_summaries"))
-
-#     # ── Bronze layer: raw clickstream events ─────────────────────────────────
-#     # Raw, unprocessed events sourced from a streaming system such as Kafka
-#     # or Azure Event Hubs. Serves as the upstream source for session_summaries.
-#     bronze_data = {
-#         "user_id":    [101 + (i % 10) for i in range(50)],
-#         "event_type": ["page_view", "click", "page_view", "add_to_cart", "purchase"] * 10,
-#         "timestamp":  pd.to_datetime(pd.date_range("2025-07-31 10:00", periods=50, freq="min")),
-#     }
-#     (spark.createDataFrame(pd.DataFrame(bronze_data))
-#          .write
-#          .mode("overwrite")
-#          .option("overwriteSchema", "true")
-#          .saveAsTable(f"{current_catalog}.bronze.clickstream_raw"))
-
-#     print("All tables created and populated successfully.")
 
 # COMMAND ----------
 
@@ -1003,149 +910,7 @@ Thought: {agent_scratchpad}
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # 5. Simulated Agent for Offline Demonstration
-# MAGIC
-# MAGIC The `DemoReactAgent` class replays a hardcoded Thought/Action/Observation
-# MAGIC sequence that mirrors the live agent's reasoning path. It requires no API
-# MAGIC key or live Databricks connection, making it useful for:
-# MAGIC
-# MAGIC - Classroom demonstrations without incurring API costs
-# MAGIC - CI environments where secrets are not available
-# MAGIC - Verifying the tool implementations in isolation before running the
-# MAGIC   full live agent
-# MAGIC
-# MAGIC The `SchemaInfoTool` and `TrendCalculatorTool` are instantiated as real
-# MAGIC objects so their outputs are genuine. Only the SQL query observation is
-# MAGIC hardcoded to avoid requiring a live Spark session.
-
-# COMMAND ----------
-
-class DemoReactAgent:
-    """
-    A simulated ReAct agent that replays a representative reasoning sequence.
-
-    Instantiates the real SchemaInfoTool and TrendCalculatorTool so that the
-    schema and trend calculation outputs are genuine. The SQL query observation
-    is hardcoded to avoid requiring a live Spark session.
-    """
-
-    def __init__(self):
-        # Use real tool instances so schema and trend outputs are authentic
-        self.schema_tool = SchemaInfoTool()
-        self.trend_tool  = TrendCalculatorTool()
-
-    def analyze(self, question: str) -> Dict[str, Any]:
-        """
-        Replays a four-step ReAct trace for the premium engagement question.
-
-        Steps:
-            1. Consult the schema (real SchemaInfoTool output)
-            2. Query gold.monthly_engagement (hardcoded observation)
-            3. Calculate the percentage change (real TrendCalculatorTool output)
-            4. Synthesize the final diagnostic report
-        """
-        print(f"\nQuestion: {question}\n")
-        print("=" * 70)
-        print("DEMO AGENT REASONING TRACE")
-        print("=" * 70)
-
-        steps = []
-
-        # ── Step 1: Consult the schema ────────────────────────────────────────
-        thought1 = (
-            "I need to understand what data is available before writing any SQL. "
-            "I will call get_lakehouse_schema first."
-        )
-        action1       = "get_lakehouse_schema"
-        action_input1 = ""
-        observation1  = self.schema_tool._run(action_input1)
-
-        print(f"\nThought       : {thought1}")
-        print(f"Action        : {action1}")
-        print(f"Action Input  : (none)")
-        print(f"Observation   :\n{observation1}")
-        steps.append((thought1, action1, action_input1, observation1))
-
-        # ── Step 2: Query the Gold layer ──────────────────────────────────────
-        thought2 = (
-            "The gold.monthly_engagement table contains avg_engagement_premium "
-            "by month. I will retrieve the two most recent months to identify "
-            "the direction and magnitude of the change."
-        )
-        action2       = "databricks_sql_query"
-        action_input2 = (
-            "SELECT month, avg_engagement_premium "
-            "FROM book_ai_ml_lakehouse.gold.monthly_engagement "
-            "ORDER BY month DESC LIMIT 2"
-        )
-        observation2  = (
-            '[{"month":"2025-07-31","avg_engagement_premium":71.0},'
-            '{"month":"2025-06-30","avg_engagement_premium":83.0}]'
-        )
-
-        print(f"\nThought       : {thought2}")
-        print(f"Action        : {action2}")
-        print(f"Action Input  : {action_input2}")
-        print(f"Observation   : {observation2}")
-        steps.append((thought2, action2, action_input2, observation2))
-
-        # ── Step 3: Quantify the change ───────────────────────────────────────
-        thought3 = (
-            "Engagement dropped from 83.0 in June to 71.0 in July. "
-            "I will use calculate_trend to get the exact percentage change "
-            "before drawing conclusions."
-        )
-        action3       = "calculate_trend"
-        action_input3 = "Premium Engagement Score,71.0,83.0"
-        observation3  = self.trend_tool._run(action_input3)
-
-        print(f"\nThought       : {thought3}")
-        print(f"Action        : {action3}")
-        print(f"Action Input  : {action_input3}")
-        print(f"Observation   : {observation3}")
-        steps.append((thought3, action3, action_input3, observation3))
-
-        # ── Step 4: Synthesize the final answer ───────────────────────────────
-        thought4 = (
-            "I have confirmed the drop, quantified it at 14.5%, and have enough "
-            "context to produce a structured diagnostic report."
-        )
-        print(f"\nThought       : {thought4}")
-
-        final_answer = """
-**Key Finding:**
-Premium customer average engagement fell 14.5%, from 83.0 in June 2025
-to 71.0 in July 2025.
-
-**Business Impact:**
-A drop of this magnitude in the premium segment is a leading indicator of
-declining satisfaction among the highest-value customers. If unaddressed,
-this level of disengagement typically precedes measurable churn within one
-to two billing cycles, with direct revenue and lifetime value implications.
-
-**Recommended Next Steps and Hypotheses:**
-1. Drill-Down Analysis: Query silver.session_summaries to determine whether
-   average session duration also declined in July, which would suggest a
-   product experience issue rather than an external factor.
-2. Conversion Rate Check: Compare the converted flag in session_summaries
-   across June and July for premium customers to see if purchase intent dropped.
-3. Product Change Review: Identify any features deprecated or modified in
-   late June or early July that could have degraded the premium experience.
-4. Competitive Intelligence: Assess whether a competitor launched a new
-   offering in the same period that may be attracting premium customers away.
-"""
-        print(f"\nFinal Answer  :{final_answer}")
-
-        return {
-            "answer":             final_answer,
-            "intermediate_steps": steps,
-            "success":            True,
-        }
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC # 6. Agent Invocation
+# MAGIC # 5. Agent Invocation
 # MAGIC
 # MAGIC The following cells retrieve credentials, set up the environment,
 # MAGIC instantiate the live agent, and run three questions that demonstrate
@@ -1162,7 +927,7 @@ to two billing cycles, with direct revenue and lifetime value implications.
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 6.1 ReAct Trace Helper
+# MAGIC ## 5.1 ReAct Trace Helper
 # MAGIC
 # MAGIC `display_react_trace()` formats the full Thought/Action/Observation trace
 # MAGIC captured by `AgentExecutor` into a clean, labeled structure. Although
@@ -1208,7 +973,7 @@ def display_react_trace(result: Dict[str, Any]) -> None:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 6.2 Retrieve API Key and Configure Environment
+# MAGIC ## 5.2 Retrieve API Key and Configure Environment
 # MAGIC
 # MAGIC The OpenAI API key is retrieved from Databricks Secrets using scope `book`
 # MAGIC and key `OPENAI_API_KEY`. To create the secret if it does not yet exist,
@@ -1259,7 +1024,7 @@ print("\nAgent instantiated and ready.")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 6.3 Question 1: Diagnose the Engagement Drop
+# MAGIC ## 5.3 Question 1: Diagnose the Engagement Drop
 # MAGIC
 # MAGIC The primary scenario from the chapter. The agent must:
 # MAGIC
@@ -1273,7 +1038,6 @@ print("\nAgent instantiated and ready.")
 
 # COMMAND ----------
 
-# question_1 = "Why did our premium customers' engagement drop last month?"
 question_1 = """
 Why did our premium customers' engagement drop last month?
 
@@ -1291,7 +1055,7 @@ display_react_trace(result_1)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 6.4 Question 2: Identify the Lowest-Engagement Premium Customer
+# MAGIC ## 5.4 Question 2: Identify the Lowest-Engagement Premium Customer
 # MAGIC
 # MAGIC Tests the agent's ability to filter by tier, sort by engagement score,
 # MAGIC and return a specific customer record from the Silver layer. The question
@@ -1312,7 +1076,7 @@ display_react_trace(result_2)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## 6.5 Question 3: Memory Follow-Up
+# MAGIC ## 5.5 Question 3: Memory Follow-Up
 # MAGIC
 # MAGIC Tests the agent's `ConversationBufferMemory`. Because `customer_id` and
 # MAGIC `lifetime_value` were explicitly included in the Question 2 answer, the
