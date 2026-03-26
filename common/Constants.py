@@ -24,3 +24,5 @@ CATALOG_NAME = "book_ai_ml_lakehouse"
 SCHEMA_NAME  = "automl"
 
 FEATURE_STORE_DB = "feature_store_db"
+
+ML_SCHEMA = "ml_models"

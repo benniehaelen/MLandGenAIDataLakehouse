@@ -1,45 +1,76 @@
 # Databricks notebook source
 # MAGIC %md-sandbox
+# MAGIC <div style="display:flex; align-items:flex-start; gap:2rem; padding:1rem 0;">
 # MAGIC
-# MAGIC <img src= "https://cdn.oreillystatic.com/images/sitewide-headers/oreilly_logo_mark_red.svg"/>&nbsp;&nbsp;<font size="16"><b>AI, ML and GenAI in the Lakehouse<b></font></span>
-# MAGIC <img style="float: left; margin: 0px 15px 15px 0px; width:30%; height: auto;" src="https://i.imgur.com/pQvJTVf.jpeg"   />   
+# MAGIC   <div style="flex-shrink:0;">
+# MAGIC     <img src="https://cdn.oreillystatic.com/images/sitewide-headers/oreilly_logo_mark_red.svg"
+# MAGIC          style="height:36px; display:block; margin-bottom:0.75rem;"/>
+# MAGIC     <img src="https://i.imgur.com/ITL8dZE.jpeg"
+# MAGIC          style="width:260px; border-radius:4px; box-shadow:0 2px 8px rgba(0,0,0,0.15); display:block;"/>
+# MAGIC   </div>
 # MAGIC
+# MAGIC   <div style="flex:1; font-family:sans-serif;">
+# MAGIC     <h1 style="font-size:1.6rem; font-weight:600; margin:0 0 0.25rem 0;">
+# MAGIC       AI, ML and GenAI in the Lakehouse
+# MAGIC     </h1>
+# MAGIC     <p style="margin:0 0 0.75rem 0; color:#555; font-size:0.95rem;">
+# MAGIC       <strong>Chapter 07-01 &mdash; Machine Learning at Scale with the NYC Taxi Dataset</strong><br/>
+# MAGIC       Author: Bennie Haelen &nbsp;&bull;&nbsp; Date: 10-28-2024
+# MAGIC     </p>
+# MAGIC     <p style="margin:0 0 0.75rem 0; color:#333; font-size:0.9rem;">
+# MAGIC       Demonstrates machine learning at scale using Apache Spark MLlib and Delta Lake
+# MAGIC       on the full NYC Yellow Taxi 2023 dataset, including distributed GBT training,
+# MAGIC       Hyperopt tuning with SparkTrials, and MLflow tracking with Unity Catalog registration.
+# MAGIC     </p>
+# MAGIC     <table style="border-collapse:collapse; font-size:0.85rem; color:#333; width:100%;">
+# MAGIC       <tr style="background:#f5f5f5;">
+# MAGIC         <td style="padding:4px 10px; font-weight:600; white-space:nowrap;">Section</td>
+# MAGIC         <td style="padding:4px 10px; font-weight:600;">Steps</td>
+# MAGIC       </tr>
+# MAGIC       <tr>
+# MAGIC         <td style="padding:4px 10px; white-space:nowrap; vertical-align:top;"><strong>0 &mdash; Setup</strong></td>
+# MAGIC         <td style="padding:4px 10px;">Constants &bull; imports &bull; MLflow registry URI</td>
+# MAGIC       </tr>
+# MAGIC       <tr style="background:#f9f9f9;">
+# MAGIC         <td style="padding:4px 10px; white-space:nowrap; vertical-align:top;"><strong>1 &mdash; Data ingestion</strong></td>
+# MAGIC         <td style="padding:4px 10px;">Load 12 monthly Parquet files &bull; estimate row count &bull; type conversions</td>
+# MAGIC       </tr>
+# MAGIC       <tr>
+# MAGIC         <td style="padding:4px 10px; white-space:nowrap; vertical-align:top;"><strong>2 &mdash; Preprocessing</strong></td>
+# MAGIC         <td style="padding:4px 10px;">Trip duration &bull; filter outliers &bull; drop nulls</td>
+# MAGIC       </tr>
+# MAGIC       <tr style="background:#f9f9f9;">
+# MAGIC         <td style="padding:4px 10px; white-space:nowrap; vertical-align:top;"><strong>3 &mdash; Feature engineering</strong></td>
+# MAGIC         <td style="padding:4px 10px;">Temporal features &bull; numerical imputation &bull; categorical fill</td>
+# MAGIC       </tr>
+# MAGIC       <tr>
+# MAGIC         <td style="padding:4px 10px; white-space:nowrap; vertical-align:top;"><strong>4 &mdash; Vectorization</strong></td>
+# MAGIC         <td style="padding:4px 10px;">StringIndexer &bull; OneHotEncoder &bull; VectorAssembler &bull; finalise dataset</td>
+# MAGIC       </tr>
+# MAGIC       <tr style="background:#f9f9f9;">
+# MAGIC         <td style="padding:4px 10px; white-space:nowrap; vertical-align:top;"><strong>5 &mdash; Delta Lake storage</strong></td>
+# MAGIC         <td style="padding:4px 10px;">Write to Delta &bull; OPTIMIZE</td>
+# MAGIC       </tr>
+# MAGIC       <tr>
+# MAGIC         <td style="padding:4px 10px; white-space:nowrap; vertical-align:top;"><strong>6 &mdash; Model training</strong></td>
+# MAGIC         <td style="padding:4px 10px;">Train/test split &bull; GBT baseline &bull; evaluate RMSE</td>
+# MAGIC       </tr>
+# MAGIC       <tr style="background:#f9f9f9;">
+# MAGIC         <td style="padding:4px 10px; white-space:nowrap; vertical-align:top;"><strong>7 &mdash; MLlib cross-validation</strong></td>
+# MAGIC         <td style="padding:4px 10px;">ParamGridBuilder &bull; CrossValidator &bull; optimised RMSE</td>
+# MAGIC       </tr>
+# MAGIC       <tr>
+# MAGIC         <td style="padding:4px 10px; white-space:nowrap; vertical-align:top;"><strong>8 &mdash; Hyperopt tuning</strong></td>
+# MAGIC         <td style="padding:4px 10px;">Objective function &bull; search space &bull; SparkTrials &bull; MLflow tracking</td>
+# MAGIC       </tr>
+# MAGIC       <tr style="background:#f9f9f9;">
+# MAGIC         <td style="padding:4px 10px; white-space:nowrap; vertical-align:top;"><strong>9 &mdash; Register in Unity Catalog</strong></td>
+# MAGIC         <td style="padding:4px 10px;">Log best model &bull; register &bull; set champion alias &bull; verify</td>
+# MAGIC       </tr>
+# MAGIC     </table>
+# MAGIC   </div>
 # MAGIC
-# MAGIC  
-# MAGIC   
-# MAGIC    Name:          07-01-Machine Learning at Scale with the NYC Taxi Dataset
-# MAGIC  
-# MAGIC    Author:    Bennie Haelen
-# MAGIC    Date:      10-28-2024
-# MAGIC
-# MAGIC    Purpose:   This notebook demonstrates machine learning at scale with Spark and MLlib
-# MAGIC                  
-# MAGIC       An outline of the different sections in this notebook:
-# MAGIC         1 - Data Ingestion and Initial Exploration
-# MAGIC            1-1 - Load the data into a Spark DataFrame
-# MAGIC            1-2 - Get an estimate on the row count by sampling
-# MAGIC            1-3 - Perform Type Conversions
-# MAGIC         2 - Data Preprocessing at Scale
-# MAGIC            2-1 - Add a trip_duration column 
-# MAGIC            2-2 - Filter out trips with unrealistic durations or distances
-# MAGIC            2-3 - Drop the rows with missing critical values
-# MAGIC         3 - Perform Feature Engineering
-# MAGIC            3-1 - Extract the Temporal Features
-# MAGIC            3-2 - Impute the mean in the numerical features
-# MAGIC            3-3 - Handle Missing Values in Categorical Features
-# MAGIC         4 - Feature Transformation and Vectorization
-# MAGIC            4-1 - Setting up Indexers and Encoders
-# MAGIC            4-2 - Setting up the VectorAssembler
-# MAGIC            4-3 - Executing the Indexers
-# MAGIC            4-4 - Executing the Encoders
-# MAGIC            4-5 - Using the VectorAssember to create our Features Column
-# MAGIC            4-6 - Finalizing the Dataset
-# MAGIC         5 - Model Training at Scale
-# MAGIC            5-1 - Splitting the Data
-# MAGIC            5-2 - Training a Gradient Boosted Tree Regressor
-# MAGIC            5-3 - Evaluating the Model
-# MAGIC               
-# MAGIC
+# MAGIC </div>
 
 # COMMAND ----------
 
