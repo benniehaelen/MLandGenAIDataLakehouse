@@ -103,7 +103,8 @@ plt.style.use('fivethirtyeight')
 
 import pandas as pd# Load the dataset
 
-df = pd.read_csv('/dbfs/FileStore/datasets/hotel_bookings.csv')
+#df = pd.read_csv('/dbfs/FileStore/datasets/hotel_bookings.csv')
+df = pd.read_csv('/Volumes/book_ai_ml_lakehouse/default/datasets/hotel_bookings.csv')
                  
 # Display the number of rows and columns
 dataset_shape = df.shape
@@ -132,18 +133,15 @@ df.info()
 
 # COMMAND ----------
 
-# Filter the DataFrame to only include rows where bookings were not canceled (is_canceled == 0),
-# and then count the occurrences of each country in the 'country' column.
-# 'value_counts()' counts the frequency of each country in the filtered dataset.
-guests_by_country = df[df['is_canceled'] == 0]['country'].value_counts().reset_index()
+guests_by_country = (
+    df[df['is_canceled'] == 'no']['country']
+    .value_counts()
+    .rename_axis('country')
+    .reset_index(name='No of guests')
+)
 
-# Rename the columns in the resulting DataFrame:
-# 'index' becomes 'country' and the count values become 'No of guests'.
-guests_by_country.columns = ['country', 'No of guests']
-
-# Display the final DataFrame containing countries and the number of guests from each country
-guests_by_country
-
+print(f"Rows returned: {len(guests_by_country)}")
+guests_by_country.head(10)
 
 # COMMAND ----------
 
@@ -196,7 +194,7 @@ guests_map.show()
 
 # Filter the DataFrame to include only rows where bookings were not canceled (is_canceled == 0).
 # This results in a subset of the data for guests who actually stayed in the hotel.
-data = df[df['is_canceled'] == 0]
+data = df[df['is_canceled'] == 'no']
 
 # Create a box plot using Plotly Express (px) to visualize the distribution of 'adr' (average daily rate) 
 # for different room types, while coloring the plot by hotel type ('hotel' column).
@@ -225,13 +223,13 @@ px.box(data_frame=data, x='reserved_room_type', y='adr', color='hotel', template
 # - 'df['hotel'] == 'Resort Hotel'' ensures that only rows related to the Resort Hotel are selected.
 # - 'df['is_canceled'] == 0' ensures that only bookings that were not canceled (is_canceled == 0) are included.
 # The resulting 'data_resort' DataFrame contains information about non-canceled Resort Hotel bookings.
-data_resort = df[(df['hotel'] == 'Resort Hotel') & (df['is_canceled'] == 0)]
+data_resort = df[(df['hotel'] == 'Resort Hotel') & (df['is_canceled'] == 'no')]
 
 # Filter the DataFrame to get only the data for the "City Hotel" where bookings were not canceled.
 # - 'df['hotel'] == 'City Hotel'' ensures that only rows related to the City Hotel are selected.
 # - 'df['is_canceled'] == 0' ensures that only bookings that were not canceled (is_canceled == 0) are included.
 # The resulting 'data_city' DataFrame contains information about non-canceled City Hotel bookings.
-data_city = df[(df['hotel'] == 'City Hotel') & (df['is_canceled'] == 0)]
+data_city = df[(df['hotel'] == 'City Hotel') & (df['is_canceled'] == 'no')]
 
 # COMMAND ----------
 
@@ -468,7 +466,7 @@ px.line(final_guests_melted, x='month', y='no of guests', color='hotel_type',
 
 # COMMAND ----------
 
-filter = df['is_canceled'] == 0
+filter = df['is_canceled'] == 'no'
 data = df[filter]
 data.head()
 
@@ -546,7 +544,7 @@ px.bar(data_frame=stay, x='total_nights', y='Number of stays', color='hotel', ba
 # Calculate the total number of canceled bookings in the DataFrame.
 # - 'df[df['is_canceled'] == 1]' filters the DataFrame to include only rows where bookings were canceled (is_canceled == 1).
 # - 'len()' counts the total number of rows in this filtered DataFrame, giving the total number of cancellations.
-is_cancelled = len(df[df['is_canceled'] == 1])
+is_cancelled = len(df[df['is_canceled'] == 'no'])
 
 # Calculate the percentage of cancellations.
 # - 'len(df)' gives the total number of bookings in the original DataFrame.
@@ -570,15 +568,13 @@ df['reservation_status'].value_counts(normalize=True) * 100
 
 # COMMAND ----------
 
-# Calculate the correlation matrix for the DataFrame 'df' using the Pearson correlation method.
-# - 'df.corr(method="pearson", numeric_only=True)' calculates the correlation matrix only for numeric columns.
-#   Pearson correlation measures the linear relationship between pairs of variables, returning values between -1 and 1.
-# - 'numeric_only=True' ensures that only numeric columns are included in the calculation, avoiding errors with non-numeric data.
-# - 'is_canceled' is the target column, and the correlation values with this column will show how strongly each numeric variable in the DataFrame correlates with the booking cancellation status.
-correlation_matrix = df.corr(method="pearson", numeric_only=True)['is_canceled'][:]
+# Create a temporary copy with is_canceled encoded as numeric
+df_corr = df.copy()
+df_corr['is_canceled'] = df_corr['is_canceled'].map({'yes': 1, 'no': 0})
 
-# Display the correlation values for each variable in relation to the 'is_canceled' column.
-# The resulting series will show how strongly each variable is correlated with booking cancellations.
+# Now compute the correlation matrix
+correlation_matrix = df_corr.corr(method="pearson", numeric_only=True)['is_canceled'].sort_values(ascending=False)
+
 correlation_matrix
 
 # COMMAND ----------
