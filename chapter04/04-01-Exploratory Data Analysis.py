@@ -40,7 +40,7 @@
 # MAGIC         3.6 If room assigned is not the reserved room type, customer might cancel.
 # MAGIC         3.7 If # of booking changes made is high, chance of cancellation is low.
 # MAGIC         3.8 Refundable bookings or those without deposit have higher cancellations.
-# MAGIC         3.9 If the # of days in waiting list is high, cancelations are higher..
+# MAGIC         3.9 If the # of days in waiting list is high, cancelations are higher
 # MAGIC </pre>
 
 # COMMAND ----------
