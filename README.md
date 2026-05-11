@@ -14,14 +14,13 @@ The code is organized by chapter. Each chapter folder contains the notebooks and
 
 | Folder | Topic |
 |---|---|
-| `chapter04` | (fill in chapter topic) |
-| `chapter05` | (fill in chapter topic) |
-| `chapter06` | (fill in chapter topic) |
-| `chapter07` | (fill in chapter topic) |
-| `chapter09` | (fill in chapter topic) |
-| `chapter10` | (fill in chapter topic) |
-| `chapter11` | Feature Store |
-| `chapter12` | (fill in chapter topic) |
+| `chapter04` | End-to-End ML with MLflow |
+| `chapter05` | Feature Engineering in the Unity Catalog |
+| `chapter06` | ML at Scale |
+| `chapter07` | GenAI in the Lakehouse: Foundations and Architecture|
+| `chapter09` | AI Agents in the Lakehouse |
+| `chapter10` | The Model Context Protocol|
+| `chapter11` | Agent-to-Agent Communication and the DSPy Framework |
 | `common` | Shared utilities and helper code used across chapters |
 | `Various notebooks for later consideration` | Reference and exploratory notebooks not directly tied to a chapter |
 
