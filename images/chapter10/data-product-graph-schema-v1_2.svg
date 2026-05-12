@@ -1,0 +1,307 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 1020" width="1700" height="1020">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f1f5f9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e8edf2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="domainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#b71c1c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d32f2f;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="productGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e65100;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f57c00;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="datasetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f9a825;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fbc02d;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="tableGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1b5e20;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2e7d32;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="columnGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d47a1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1565c0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="semanticGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a148c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7b1fa2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8fafc;stop-opacity:1" />
+    </linearGradient>
+
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#94a3b8" flood-opacity="0.25"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <marker id="arrowContains" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+    <marker id="arrowJoins" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#d97706"/>
+    </marker>
+    <marker id="arrowSemantic" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#9333ea"/>
+    </marker>
+
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#cbd5e1" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#94a3b8" opacity="0.08"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <rect width="100%" height="100%" fill="url(#grid)"/>
+  <rect width="100%" height="100%" fill="url(#dots)"/>
+
+  <!-- Title -->
+  <text x="800" y="45" font-family="'Segoe UI', Arial, sans-serif" font-size="32" fill="#0f172a" text-anchor="middle" font-weight="700" letter-spacing="1">Data Product Graph Schema</text>
+  <text x="800" y="75" font-family="'Segoe UI', Arial, sans-serif" font-size="14" fill="#334155" text-anchor="middle" letter-spacing="2">KNOWLEDGE GRAPH ENTITY-RELATIONSHIP MODEL</text>
+
+  <!-- ==================== NODES ==================== -->
+
+  <!-- DOMAIN Node -->
+  <g transform="translate(200, 220)" filter="url(#shadow)">
+    <ellipse cx="0" cy="0" rx="85" ry="50" fill="url(#domainGrad)" stroke="#ef5350" stroke-width="3"/>
+    <text x="0" y="-8" font-family="'Segoe UI', Arial, sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="700">Domain</text>
+    <text x="0" y="12" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#fee2e2" text-anchor="middle">Business Area</text>
+  </g>
+
+  <!-- Domain Properties -->
+  <g transform="translate(22, 80)">
+    <rect x="0" y="0" width="172" height="68" rx="6" fill="url(#cardGrad)" opacity="0.92" stroke="#fca5a5" stroke-width="1"/>
+    <text x="10" y="16" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#dc2626">name: STRING</text>
+    <text x="10" y="30" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#dc2626">description: STRING</text>
+    <text x="10" y="44" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#dc2626">owner_email: STRING</text>
+    <text x="10" y="58" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#93c5fd">embedding: FLOAT[768]</text>
+  </g>
+
+  <!-- DATA PRODUCT Node -->
+  <g transform="translate(500, 310)" filter="url(#shadow)">
+    <ellipse cx="0" cy="0" rx="95" ry="55" fill="url(#productGrad)" stroke="#d97706" stroke-width="3"/>
+    <text x="0" y="-10" font-family="'Segoe UI', Arial, sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="700">DataProduct</text>
+    <text x="0" y="10" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#fff7ed" text-anchor="middle">Logical Grouping</text>
+  </g>
+
+  <!-- DataProduct Properties -->
+  <g transform="translate(395, 388)">
+    <rect x="0" y="0" width="188" height="130" rx="6" fill="url(#cardGrad)" opacity="0.92" stroke="#fdba74" stroke-width="1"/>
+    <text x="10" y="16" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ea580c">name: STRING</text>
+    <text x="10" y="30" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ea580c">description: STRING</text>
+    <text x="10" y="44" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ea580c">version: STRING</text>
+    <text x="10" y="58" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ea580c">status: ENUM</text>
+    <text x="10" y="72" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ea580c">preferred_zone: ENUM</text>
+    <text x="10" y="86" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ea580c">zone_strategy: STRING</text>
+    <text x="10" y="100" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#93c5fd">embedding: FLOAT[768]</text>
+  </g>
+
+  <!-- DATASET Node -->
+  <g transform="translate(800, 310)" filter="url(#shadow)">
+    <ellipse cx="0" cy="0" rx="80" ry="50" fill="url(#datasetGrad)" stroke="#ffeb3b" stroke-width="3"/>
+    <text x="0" y="-8" font-family="'Segoe UI', Arial, sans-serif" font-size="16" fill="#000000" text-anchor="middle" font-weight="700">Dataset</text>
+    <text x="0" y="10" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#fef3c7" text-anchor="middle">BQ Dataset</text>
+  </g>
+
+  <!-- Dataset Properties -->
+  <g transform="translate(710, 382)">
+    <rect x="0" y="0" width="174" height="68" rx="6" fill="url(#cardGrad)" opacity="0.92" stroke="#fde68a" stroke-width="1"/>
+    <text x="10" y="16" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#d97706">project_id: STRING</text>
+    <text x="10" y="30" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#d97706">dataset_id: STRING</text>
+    <text x="10" y="44" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#d97706">location: STRING</text>
+    <text x="10" y="58" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#93c5fd">embedding: FLOAT[768]</text>
+  </g>
+
+  <!-- TABLE Node -->
+  <g transform="translate(1100, 310)" filter="url(#shadow)">
+    <ellipse cx="0" cy="0" rx="85" ry="55" fill="url(#tableGrad)" stroke="#69f0ae" stroke-width="3"/>
+    <text x="0" y="-10" font-family="'Segoe UI', Arial, sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="700">Table</text>
+    <text x="0" y="10" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#ffffff" text-anchor="middle">BQ Table/View</text>
+  </g>
+
+  <!-- Table Properties: Base + Grain + Recency sections -->
+  <g transform="translate(1412, 50)">
+    <rect x="0" y="0" width="264" height="340" rx="6" fill="#166534" opacity="1" stroke="#86efac" stroke-width="1"/>
+    <!-- BASE -->
+    <text x="10" y="16" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ffffff">fqn: STRING</text>
+    <text x="10" y="30" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ffffff">name: STRING</text>
+    <text x="10" y="44" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ffffff">type: ENUM</text>
+    <text x="10" y="58" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ffffff">description: STRING</text>
+    <text x="10" y="72" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ffffff">row_count: INT</text>
+    <text x="10" y="86" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ffffff">zone: ENUM</text>
+    <text x="10" y="100" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#bbf7d0">embedding: FLOAT[768]</text>
+    <!-- GRAIN section -->
+    <line x1="6" y1="109" x2="258" y2="109" stroke="#4ade80" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.7"/>
+    <text x="10" y="121" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#4ade80" font-weight="700" letter-spacing="1">GRAIN</text>
+    <text x="10" y="135" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#d1fae5">grain_keys: LIST</text>
+    <text x="10" y="149" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#d1fae5">grain_description: STRING</text>
+    <text x="10" y="163" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#d1fae5">cardinality_label: ENUM</text>
+    <text x="10" y="177" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#d1fae5">safe_aggregations: LIST</text>
+    <!-- RECENCY section -->
+    <line x1="6" y1="186" x2="258" y2="186" stroke="#4ade80" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.7"/>
+    <text x="10" y="198" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#4ade80" font-weight="700" letter-spacing="1">RECENCY</text>
+    <text x="10" y="212" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#bbf7d0">recency_pattern: ENUM</text>
+    <text x="10" y="226" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#bbf7d0">recency_partition_by: LIST</text>
+    <text x="10" y="240" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#bbf7d0">recency_rank_col: STRING</text>
+    <text x="10" y="254" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#bbf7d0">recency_rank_order: ENUM</text>
+    <text x="10" y="268" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#bbf7d0">recency_flag_col: STRING</text>
+    <text x="10" y="282" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#bbf7d0">recency_flag_value: STRING</text>
+    <text x="10" y="296" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#bbf7d0">recency_eff_end_col: STRING</text>
+    <text x="10" y="310" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#bbf7d0">recency_sentinel_value: STRING</text>
+  </g>
+
+  <!-- COLUMN Node -->
+  <g transform="translate(1100, 610)" filter="url(#shadow)">
+    <ellipse cx="0" cy="0" rx="75" ry="48" fill="url(#columnGrad)" stroke="#42a5f5" stroke-width="3"/>
+    <text x="0" y="-8" font-family="'Segoe UI', Arial, sans-serif" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="700">Column</text>
+    <text x="0" y="10" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#ffffff" text-anchor="middle">Field</text>
+  </g>
+
+  <!-- Column Properties: Base + DateResolver sections -->
+  <g transform="translate(1250, 440)">
+    <rect x="0" y="0" width="200" height="210" rx="6" fill="#1e3a8a" opacity="1" stroke="#bfdbfe" stroke-width="1"/>
+    <!-- BASE -->
+    <text x="10" y="16" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ffffff">fqn: STRING</text>
+    <text x="10" y="30" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ffffff">name: STRING</text>
+    <text x="10" y="44" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ffffff">data_type: STRING</text>
+    <text x="10" y="58" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#ffffff">description: STRING</text>
+    <text x="10" y="72" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#bfdbfe">embedding: FLOAT[768]</text>
+    <!-- DATE RESOLVER section -->
+    <line x1="6" y1="81" x2="194" y2="81" stroke="#f9a8d4" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.7"/>
+    <text x="10" y="93" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#f9a8d4" font-weight="700" letter-spacing="0.5">DATE RESOLVER</text>
+    <text x="10" y="107" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#fbcfe8">is_date_column: BOOL</text>
+    <text x="10" y="121" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#fbcfe8">date_storage_type: ENUM</text>
+    <text x="10" y="135" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#fbcfe8">date_string_format: STRING</text>
+    <text x="10" y="149" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#fbcfe8">date_cast_for_filter: STRING</text>
+    <text x="10" y="163" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#fbcfe8">date_cast_for_join: STRING</text>
+    <text x="10" y="177" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#fbcfe8">has_time: BOOL</text>
+    <text x="10" y="191" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#fbcfe8">timezone: STRING</text>
+  </g>
+
+  <!-- SEMANTIC TYPE Node -->
+  <g transform="translate(800, 730)" filter="url(#shadow)">
+    <ellipse cx="0" cy="0" rx="90" ry="55" fill="url(#semanticGrad)" stroke="#ce93d8" stroke-width="3"/>
+    <text x="0" y="-10" font-family="'Segoe UI', Arial, sans-serif" font-size="15" fill="#ffffff" text-anchor="middle" font-weight="700">SemanticType</text>
+    <text x="0" y="10" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#f3e8ff" text-anchor="middle">Business Concept</text>
+  </g>
+
+  <!-- SemanticType Properties -->
+  <g transform="translate(562, 695)">
+    <rect x="0" y="0" width="170" height="62" rx="6" fill="url(#cardGrad)" opacity="0.92" stroke="#e9d5ff" stroke-width="1"/>
+    <text x="10" y="16" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#9333ea">name: STRING</text>
+    <text x="10" y="30" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#9333ea">description: STRING</text>
+    <text x="10" y="44" font-family="'Courier New', monospace" font-size="10.5" font-weight="500" fill="#93c5fd">embedding: FLOAT[768]</text>
+  </g>
+
+  <!-- ==================== RELATIONSHIPS ==================== -->
+
+  <!-- Domain -> DataProduct: CONTAINS -->
+  <path d="M285,230 Q380,265 405,280" stroke="#64748b" stroke-width="2.5" fill="none" marker-end="url(#arrowContains)"/>
+  <rect x="313" y="238" width="80" height="22" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="0.5"/>
+  <text x="353" y="253" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#334155" text-anchor="middle" font-weight="600">CONTAINS</text>
+
+  <!-- DataProduct -> Dataset: CONTAINS -->
+  <path d="M595,310 L720,310" stroke="#64748b" stroke-width="2.5" fill="none" marker-end="url(#arrowContains)"/>
+  <rect x="622" y="299" width="80" height="22" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="0.5"/>
+  <text x="662" y="314" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#334155" text-anchor="middle" font-weight="600">CONTAINS</text>
+
+  <!-- Dataset -> Table: CONTAINS -->
+  <path d="M880,310 L1015,310" stroke="#64748b" stroke-width="2.5" fill="none" marker-end="url(#arrowContains)"/>
+  <rect x="908" y="299" width="80" height="22" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="0.5"/>
+  <text x="948" y="314" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#334155" text-anchor="middle" font-weight="600">CONTAINS</text>
+
+  <!-- Table -> Column: HAS_COLUMN -->
+  <path d="M1100,365 L1100,562" stroke="#64748b" stroke-width="2.5" fill="none" marker-end="url(#arrowContains)"/>
+  <rect x="1110" y="450" width="90" height="22" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="0.5"/>
+  <text x="1155" y="465" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#334155" text-anchor="middle" font-weight="600">HAS_COLUMN</text>
+
+  <!-- Column -> SemanticType: HAS_TYPE -->
+  <path d="M1025,625 Q920,680 890,710" stroke="#9333ea" stroke-width="2" fill="none" marker-end="url(#arrowSemantic)"/>
+  <rect x="918" y="654" width="75" height="22" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="0.5"/>
+  <text x="955" y="669" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#9333ea" text-anchor="middle" font-weight="500">HAS_TYPE</text>
+
+  <!-- Table -> Table: JOINS_TO (right-side self-loop) -->
+  <path d="M1185,290 Q1275,245 1275,310 Q1275,375 1185,330" stroke="#d97706" stroke-width="2.5" fill="none" marker-end="url(#arrowJoins)"/>
+  <rect x="1278" y="248" width="128" height="126" rx="6" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="1342" y="266" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#b45309" text-anchor="middle" font-weight="700">JOINS_TO</text>
+  <text x="1286" y="282" font-family="'Courier New', monospace" font-size="8.5" fill="#ea580c">join_type: ENUM</text>
+  <text x="1286" y="296" font-family="'Courier New', monospace" font-size="8.5" fill="#ea580c">join_condition: STRING</text>
+  <text x="1286" y="310" font-family="'Courier New', monospace" font-size="8.5" fill="#ea580c">join_column_count: INT</text>
+  <text x="1286" y="324" font-family="'Courier New', monospace" font-size="8.5" fill="#ea580c">cardinality: ENUM</text>
+  <text x="1286" y="338" font-family="'Courier New', monospace" font-size="8.5" fill="#ea580c">created_at: DATETIME</text>
+
+  <!-- ==================== BADGES ==================== -->
+
+  <!-- DateResolver badge pointing to Column properties -->
+  <g transform="translate(1398, 548)">
+    <rect x="0" y="0" width="140" height="36" rx="6" fill="#fce7f3" opacity="1" stroke="#ec4899" stroke-width="1"/>
+    <text x="70" y="13" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#db2777" text-anchor="middle" font-weight="700" letter-spacing="1">NEW · DateResolver</text>
+    <text x="70" y="27" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#be185d" text-anchor="middle">7 properties on Column</text>
+  </g>
+  <line x1="1398" y1="566" x2="1450" y2="575" stroke="#ec4899" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+
+  <!-- Grain & Recency badge pointing to Table properties -->
+  <g transform="translate(1412, 404)">
+    <rect x="0" y="0" width="175" height="36" rx="6" fill="#dcfce7" opacity="0.95" stroke="#4ade80" stroke-width="1"/>
+    <text x="87" y="13" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#15803d" text-anchor="middle" font-weight="700" letter-spacing="1">NEW · Grain &amp; Recency</text>
+    <text x="87" y="27" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#15803d" text-anchor="middle">12 metadata properties on Table</text>
+  </g>
+  <line x1="1487" y1="404" x2="1487" y2="394" stroke="#4ade80" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+
+  <!-- ==================== LEGEND ==================== -->
+  <g transform="translate(30, 870)">
+    <rect x="0" y="0" width="340" height="126" rx="8" fill="url(#cardGrad)" opacity="0.92" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="14" y="18" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#334155" font-weight="700" letter-spacing="1">RELATIONSHIP TYPES</text>
+    <!-- CONTAINS -->
+    <line x1="14" y1="36" x2="60" y2="36" stroke="#64748b" stroke-width="2" marker-end="url(#arrowContains)"/>
+    <text x="68" y="40" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#334155">CONTAINS  (hierarchy traversal)</text>
+    <!-- HAS_COLUMN -->
+    <line x1="14" y1="60" x2="60" y2="60" stroke="#64748b" stroke-width="2" marker-end="url(#arrowContains)"/>
+    <text x="68" y="64" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#334155">HAS_COLUMN  (table → field)</text>
+    <!-- JOINS_TO -->
+    <line x1="14" y1="84" x2="60" y2="84" stroke="#d97706" stroke-width="2" marker-end="url(#arrowJoins)"/>
+    <text x="68" y="88" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#334155">JOINS_TO  (join discovery, undirected)</text>
+    <!-- HAS_TYPE -->
+    <line x1="14" y1="108" x2="60" y2="108" stroke="#9333ea" stroke-width="2" marker-end="url(#arrowSemantic)"/>
+    <text x="68" y="112" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#334155">HAS_TYPE  (semantic labeling)</text>
+  </g>
+
+  <!-- Vector index legend -->
+  <g transform="translate(400, 870)">
+    <rect x="0" y="0" width="330" height="126" rx="8" fill="url(#cardGrad)" opacity="0.92" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="14" y="18" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#334155" font-weight="700" letter-spacing="1">VECTOR INDEXES (768-dim cosine)</text>
+    <text x="14" y="40" font-family="'Courier New', monospace" font-size="9.5" fill="#6d28d9">domain_embeddings    · product_embeddings</text>
+    <text x="14" y="58" font-family="'Courier New', monospace" font-size="9.5" fill="#6d28d9">dataset_embeddings   · table_embeddings</text>
+    <text x="14" y="76" font-family="'Courier New', monospace" font-size="9.5" fill="#6d28d9">column_embeddings    · type_embeddings</text>
+    <text x="14" y="100" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#64748b">All nodes carry embedding: FLOAT[768] for</text>
+    <text x="14" y="114" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#64748b">natural-language semantic search via cosine similarity</text>
+  </g>
+
+  <!-- Identity key legend -->
+  <g transform="translate(760, 870)">
+    <rect x="0" y="0" width="370" height="126" rx="8" fill="url(#cardGrad)" opacity="0.92" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="14" y="18" font-family="'Segoe UI', Arial, sans-serif" font-size="11" fill="#334155" font-weight="700" letter-spacing="1">IDENTITY KEYS (MERGE pattern)</text>
+    <text x="14" y="38" font-family="'Courier New', monospace" font-size="9.5" fill="#0f172a">Domain      · name</text>
+    <text x="14" y="54" font-family="'Courier New', monospace" font-size="9.5" fill="#0f172a">DataProduct · name</text>
+    <text x="14" y="70" font-family="'Courier New', monospace" font-size="9.5" fill="#0f172a">Dataset     · {project_id, dataset_id}</text>
+    <text x="14" y="86" font-family="'Courier New', monospace" font-size="9.5" fill="#0f172a">Table       · fqn  (project.dataset.table)</text>
+    <text x="14" y="102" font-family="'Courier New', monospace" font-size="9.5" fill="#0f172a">Column      · fqn  (project.dataset.table.col)</text>
+    <text x="14" y="118" font-family="'Courier New', monospace" font-size="9.5" fill="#0f172a">SemanticType · name</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="1690" y="1010" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#94a3b8" text-anchor="end">Data Product Graph Schema v1.2 · Grain + Recency + DateResolver Metadata</text>
+</svg>
