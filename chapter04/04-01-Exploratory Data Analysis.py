@@ -17,7 +17,7 @@
 # MAGIC     <p style="margin: 0.3rem 0;"><b>Name:</b> chapter 03-01-Exploratory Data Analysis</p>
 # MAGIC     <p style="margin: 0.3rem 0;"><b>Author:</b> Bennie Haelen</p>
 # MAGIC     <p style="margin: 0.3rem 0;"><b>Date:</b> 1-21-2026</p>
-# MAGIC     <p style="margin: 0.5rem 0;"><b>Purpose:</b> This notebook performs the exploratory data analysis of the hotel booking dataset for chapter 4 of the book: <i>Machine Learning Use Case with MLflow</i></p>
+# MAGIC     <p style="margin: 0.5rem 0;"><b>Purpose:</b> This notebook performs the exploratory data analysis for the hotel booking dataset for chapter 4 of the book: <i>End-to-End MLflow</i></p>
 # MAGIC   </div>
 # MAGIC </div>
 # MAGIC
@@ -34,13 +34,11 @@
 # MAGIC   3. Assumptions
 # MAGIC         3.1 The cancelation rate of city hotels is higher than resort hotels.
 # MAGIC         3.2 The earlier the booking made, higher the chances of cancellation.
-# MAGIC         3.3 Bookings for longer durations have lower cancellations
-# MAGIC         3.4 A repeated guest is less likely to cancel current booking.
-# MAGIC         3.5 Higher previous cancellations lead to cancellation of current bookings.
-# MAGIC         3.6 If room assigned is not the reserved room type, customer might cancel.
-# MAGIC         3.7 If # of booking changes made is high, chance of cancellation is low.
-# MAGIC         3.8 Refundable bookings or those without deposit have higher cancellations.
-# MAGIC         3.9 If the # of days in waiting list is high, cancelations are higher..
+# MAGIC         3.3 A repeated guest is less likely to cancel current booking.
+# MAGIC         3.4 Higher previous cancellations lead to cancellation of current bookings.
+# MAGIC         3.5 If room assigned is not the reserved room type, customer might cancel.
+# MAGIC         3.6 Refundable bookings or those without deposit have higher cancellations.
+# MAGIC   4. Create a Pearson correlation matrix
 # MAGIC </pre>
 
 # COMMAND ----------
@@ -60,10 +58,10 @@
 # MAGIC The primary libraries that we use are:
 # MAGIC - NumPy for analytic arrays
 # MAGIC - Pandas for DataFrames
-# MAGIC - MatplotLib for generating plots
+# MAGIC - MatplotLib and Seaborn for generating plots
 # MAGIC - Folium for Earth maps
 # MAGIC - Plotly for advanced plots
-# MAGIC - Scikit-learn for all machine learning tasks
+# MAGIC
 
 # COMMAND ----------
 
@@ -107,7 +105,6 @@ plt.style.use('fivethirtyeight')
 
 import pandas as pd# Load the dataset
 
-#df = pd.read_csv('/dbfs/FileStore/datasets/hotel_bookings.csv')
 df = pd.read_csv('/Volumes/book_ai_ml_lakehouse/default/datasets/hotel_bookings.csv')
                  
 # Display the number of rows and columns
@@ -133,7 +130,7 @@ df.info()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Question: From what country originate mosts of the guests?
+# MAGIC ##2-1 Question: From what country do most guests originate?
 
 # COMMAND ----------
 
@@ -192,7 +189,7 @@ guests_map.show()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Question: How much do guests pay per room per night?
+# MAGIC ##2-2 Question: How much do guests pay per room per night?
 
 # COMMAND ----------
 
@@ -210,11 +207,10 @@ data = df[df['is_canceled'] == 'no']
 #    muted colors for a softer visual look.
 px.box(data_frame=data, x='reserved_room_type', y='adr', color='hotel', template='seaborn')
 
-
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Question: How does the price vary per night over the year?
+# MAGIC ##2-3 Question: How does the price vary per night over the year?
 
 # COMMAND ----------
 
@@ -349,7 +345,7 @@ px.line(final_prices, x='month', y=['price_for_resort', 'price_for_city_hotel'],
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Question: Which are the busy months?
+# MAGIC ##2-4 Question: Which are the busy months?
 
 # COMMAND ----------
 
@@ -466,7 +462,7 @@ px.line(final_guests_melted, x='month', y='no of guests', color='hotel_type',
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Question: How long do people stay at the hotels?
+# MAGIC ##2-5 Question: How long do people stay at the hotels?
 
 # COMMAND ----------
 
@@ -490,7 +486,6 @@ data['total_nights'] = data['stays_in_weekend_nights'] + data['stays_in_week_nig
 # Display the first five rows of the DataFrame to verify that the 'total_nights' column has been added correctly.
 # 'head()' shows the first 5 rows, allowing a quick inspection of the data.
 data.head()
-
 
 # COMMAND ----------
 
@@ -535,7 +530,7 @@ px.bar(data_frame=stay, x='total_nights', y='Number of stays', color='hotel', ba
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Cancelation Rates at city hotels are higher than resort hotels
+# MAGIC ##3-1 Cancelation Rates at city hotels are higher than resort hotels
 # MAGIC The type of hotel decides the cancelation rate with higher cancellations in city hotels as compared to resort hotels due to variety of facilities available in resort hotels.
 
 # COMMAND ----------
@@ -564,22 +559,6 @@ print(f"Total percentage of cancellations: {percentage_cancelations:.2f}%")
 # - Multiplying by 100 converts the proportions to percentages.
 df['reservation_status'].value_counts(normalize=True) * 100
 
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ###Create a Pearon correlation matrix over the 'is_canceled' column
-
-# COMMAND ----------
-
-# Create a temporary copy with is_canceled encoded as numeric
-df_corr = df.copy()
-df_corr['is_canceled'] = df_corr['is_canceled'].map({'yes': 1, 'no': 0})
-
-# Now compute the correlation matrix
-correlation_matrix = df_corr.corr(method="pearson", numeric_only=True)['is_canceled'].sort_values(ascending=False)
-
-correlation_matrix
 
 # COMMAND ----------
 
@@ -626,7 +605,7 @@ plt.show()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##The earlier the booking made, higher the chances of cancellation.
+# MAGIC ##3-2 The earlier the booking made, higher the chances of cancellation.
 
 # COMMAND ----------
 
@@ -660,7 +639,6 @@ plt.tight_layout()
 # Show the plot
 plt.show()
 
-
 # COMMAND ----------
 
 # MAGIC %md
@@ -674,44 +652,7 @@ plt.show()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##The more children and babies, the higher the chance of cancelation
-
-# COMMAND ----------
-
-# Filter the DataFrame to include only rows where there are either children or babies.
-# - 'df['children'] != 0' checks for rows where the 'children' column is not equal to 0 (i.e., children are present).
-# - 'df['babies'] != 0' checks for rows where the 'babies' column is not equal to 0 (i.e., babies are present).
-# - The '|' operator is a logical OR, so we select rows where either of these conditions is true (i.e., either children or babies are present).
-filtered_df = df.loc[(df['children'] != 0) | (df['babies'] != 0)]
-
-# Calculate the total number of rows in the filtered DataFrame, i.e., how many bookings involve children or babies.
-num_bookings_with_children_or_babies = len(filtered_df)
-
-# Calculate the total number of rows in the original DataFrame, i.e., the total number of bookings.
-total_bookings = len(df)
-
-# Calculate the percentage of bookings that involve either children or babies.
-# This is done by dividing the number of bookings with children or babies by the total number of bookings.
-percentage_of_bookings_with_children_or_babies = (num_bookings_with_children_or_babies / total_bookings) * 100
-
-# Print or return the percentage value.
-percentage_of_bookings_with_children_or_babies
-
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC The number of customers having children or babies or both are only 8% of the total population. Therefore this information can be ignored as it will not play a significant role in deciding whether to cancel the booking or not. Assumption 3 is therefore inconclusive
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ###This assumption is inconclusive 
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ##A repeated guest is less likely to cancel current booking.
+# MAGIC ##3-3 A repeated guest is less likely to cancel current booking.
 
 # COMMAND ----------
 
@@ -763,7 +704,7 @@ print(f"Percentage of cancellations among returning guests: {percentage_old_gues
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Higher previous cancellations lead to cancellation of current bookings
+# MAGIC ##3-4 Higher previous cancellations lead to cancellation of current bookings
 
 # COMMAND ----------
 
@@ -794,7 +735,6 @@ plt.legend(title='Current Booking Canceled', labels=['Not Canceled', 'Canceled']
 # Display the plot
 plt.show()
 
-
 # COMMAND ----------
 
 # MAGIC %md
@@ -808,7 +748,7 @@ plt.show()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##If room assigned is not the reserved room type, customer might cancel.
+# MAGIC ##3-5 If room assigned is not the reserved room type, customer might cancel.
 
 # COMMAND ----------
 
@@ -873,50 +813,7 @@ plt.show()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##If  number of booking changes made is high, chance of cancellation is low
-
-# COMMAND ----------
-
-# Set Seaborn style for better aesthetics
-sns.set_style("whitegrid")
-
-# Create the point plot
-plt.figure(figsize=(8, 6))
-sns.pointplot(data=df, x='booking_changes', y='is_canceled', color='blue', markers="o", linestyles='-', scale=0.7)
-
-# Add titles and labels to make the plot informative
-plt.title('Effect of Booking Changes on Cancellations', fontsize=14)
-plt.xlabel('Number of Booking Changes', fontsize=12)
-plt.ylabel('Cancellation Rate (Proportion of Cancellations)', fontsize=12)
-
-# Improve the visibility of axis ticks and labels
-plt.xticks(ticks=range(df['booking_changes'].nunique()), fontsize=10)
-plt.yticks(fontsize=10)
-
-# Add gridlines for better readability
-plt.grid(True, which='both', linestyle='--', linewidth=0.5)
-
-# Adjust layout to avoid cutting off elements
-plt.tight_layout()
-
-# Display the plot
-plt.show()
-
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC Assumption 8 about the bookings does not hold as there is no trend in it's impact on the cancellation of bookings.
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ##This assumption has been invalidated
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ##Refundable bookings or those without deposits have higher cancellations.
+# MAGIC ##3-6 Refundable bookings or those without deposits have higher cancellations.
 
 # COMMAND ----------
 
@@ -969,45 +866,32 @@ plt.show()
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ##Assumption: If the # of days in waiting list is high, cancelations are higher
-
-# COMMAND ----------
-
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-# Set the Seaborn style for better aesthetics
-sns.set_style("whitegrid")
-
-# Create the relational plot (relplot) with line representation
-# - 'x='days_in_waiting_list'' sets the x-axis to the number of days in the waiting list.
-# - 'y='is_canceled'' plots the y-axis showing whether a booking was canceled (1) or not (0).
-# - 'kind='line'' creates a line plot.
-# - 'estimator=None' ensures that the plot shows each point as is without any aggregation.
-plt.figure(figsize=(10, 6))
-sns.relplot(data=df, x='days_in_waiting_list', y='is_canceled', kind='line', estimator=None, color='blue', marker='o')
-
-# Add title and axis labels for clarity
-plt.title('Effect of Waiting List Days on Cancellations', fontsize=14)
-plt.xlabel('Days in Waiting List', fontsize=12)
-plt.ylabel('Cancellation Status (0 = Not Canceled, 1 = Canceled)', fontsize=12)
-
-# Adjust layout to ensure everything fits properly
-plt.tight_layout()
-
-# Show the plot
-plt.show()
-
+# MAGIC A Pearson correlation matrix reveals the strongest predictors of cancellation.<br> Because `is_canceled` is stored as a string in this dataset, 
+# MAGIC it must first be encoded as numeric before computing correlations:
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC No relation can be established between days_in_waiting_list and is_canceled. Therefore, we will take this feature for further analysis. Therefore, this assumption can be discarded.
+# MAGIC > #Create a Pearson correlation matrix over the 'is_canceled' column
+
+# COMMAND ----------
+
+# Create a temporary copy with is_canceled encoded as numeric
+df_corr = df.copy()
+df_corr['is_canceled'] = df_corr['is_canceled'].map({'yes': 1, 'no': 0})
+
+# Now compute the correlation matrix
+correlation_matrix = df_corr.corr(method="pearson", numeric_only=True)['is_canceled'].sort_values(ascending=False)
+
+correlation_matrix
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ###This assumption does not hold true
+# MAGIC The analysis identifies `lead_time` as the highest positive correlate (longer advance
+# MAGIC bookings show some positive correlation with cancellation)<br> and `total_of_special_
+# MAGIC requests` as the highest negative correlate (guests who make special requests are less
+# MAGIC likely to cancel, suggesting higher commitment to the booking).
 
 # COMMAND ----------
 
