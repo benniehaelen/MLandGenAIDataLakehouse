@@ -1,9 +1,17 @@
 # Databricks notebook source
 # MAGIC %md-sandbox
+# MAGIC <div style="display:flex; align-items:flex-start; gap:2rem; padding:1rem 0;">
 # MAGIC
-# MAGIC
-# MAGIC <img src= "https://cdn.oreillystatic.com/images/sitewide-headers/oreilly_logo_mark_red.svg"/>&nbsp;&nbsp;<font size="16"><b>AI, ML and GenAI in the Lakehouse<b></font></span>
-# MAGIC <img style="float: left; margin: 0px 15px 15px 0px; width:30%; height: auto;" src="https://i.imgur.com/FWzhbhX.jpeg"   />   
+# MAGIC   <div style="flex-shrink:0;">
+# MAGIC     <img src="https://cdn.oreillystatic.com/images/sitewide-headers/oreilly_logo_mark_red.svg"
+# MAGIC          style="height:36px; display:block; margin-bottom:0.75rem;"/>
+# MAGIC     <img src="https://i.imgur.com/ITL8dZE.jpeg"
+# MAGIC          style="width:260px; border-radius:4px; box-shadow:0 2px 8px rgba(0,0,0,0.15); display:block;"/>
+# MAGIC   </div>
+# MAGIC   <div style="flex:1; font-family:sans-serif;">
+# MAGIC     <h1 style="font-size:1.6rem; font-weight:600; margin:0 0 0.25rem 0;">
+# MAGIC       AI, ML and GenAI in the Lakehouse
+# MAGIC     </h1>  
 # MAGIC
 # MAGIC
 # MAGIC  

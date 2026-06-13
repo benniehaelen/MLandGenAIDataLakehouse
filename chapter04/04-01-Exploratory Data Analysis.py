@@ -14,7 +14,7 @@
 # MAGIC       <img src="https://cdn.oreillystatic.com/images/sitewide-headers/oreilly_logo_mark_red.svg" style="height: 24px; vertical-align: middle;"/>
 # MAGIC       <span style="font-size: 1.5rem; font-weight: bold; vertical-align: middle;">&nbsp;ML and Generative AI in the Data Lakehouse</span>
 # MAGIC     </div>
-# MAGIC     <p style="margin: 0.3rem 0;"><b>Name:</b> chapter 03-01-Exploratory Data Analysis</p>
+# MAGIC     <p style="margin: 0.3rem 0;"><b>Name:</b> chapter 04-01-Exploratory Data Analysis</p>
 # MAGIC     <p style="margin: 0.3rem 0;"><b>Author:</b> Bennie Haelen</p>
 # MAGIC     <p style="margin: 0.3rem 0;"><b>Date:</b> 1-21-2026</p>
 # MAGIC     <p style="margin: 0.5rem 0;"><b>Purpose:</b> This notebook performs the exploratory data analysis for the hotel booking dataset for chapter 4 of the book: <i>End-to-End MLflow</i></p>
